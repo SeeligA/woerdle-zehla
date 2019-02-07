@@ -114,7 +114,7 @@ def new_translation(df, cache, sample_object, source, file):
     df = append_sample_translations(df, sample_object, target_mt)
     # Optional: Save output to file for testing on other modules
     # TODO: Make output more accessible to users
-    df.to_csv('after_trans_{}.csv'.format(file))
+    df.to_csv('out/after_trans_{}.csv'.format(file))
     print('\nYour data has been written to you current working directory.\n')
     # Matching target strings and MT strings based on index numbers
     target_list, mt_list = match_target_mt(df)

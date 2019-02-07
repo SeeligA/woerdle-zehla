@@ -141,7 +141,7 @@ def plot_ped(cache):
     plt.hist(data=df, x = df['ped'], bins=bin_edges);
     plt.xlabel('Post-edit density (Agg. score: {:.3f})'.format(cache['ped']))
     plt.ylabel('Number of segments ({} seg. total)'.format(len(cache['ped_details'])));
-    plt.savefig('{}_ped_{:.3f}_{}.png'.format(cache['user'], cache['ped'], cache['Project'], dpi=300))
+    plt.savefig('out/{}_ped_{:.3f}_{}.png'.format(cache['user'], cache['ped'], cache['Project'], dpi=300))
     return None
 
 def print_details(apples_or_peaches, target_list, mt_list):
