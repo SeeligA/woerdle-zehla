@@ -27,7 +27,7 @@ def prepare_sample_object(df, sample_size = 15):
 
     # Use query logic to filter for valid source segments
     # Checks for segment type first. Then checks for different valid status
-    my_filter = df.query('stype == "source" & (status == "Korrigiert" | status == "Übersetzt" | status == "Übersetzt (Aus zweisprachigem Dokument eingefügt)" | status == "Bearbeitet (Aus zweisprachigem Dokument eingefügt)")')
+    my_filter = df.query('stype == "source" & (status == "ApprovedTranslation" | status == "ApprovedSignOff" | status == "Translated" | status == "Korrigiert" | status == "Übersetzt" | status == "Übersetzt (Aus zweisprachigem Dokument eingefügt)" | status == "Bearbeitet (Aus zweisprachigem Dokument eingefügt)")')
     # Eliminate repetitions
     filtered_items = my_filter.drop_duplicates('text')
     # Adapt sample size, use the lesser of all the sample segments available
