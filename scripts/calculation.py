@@ -138,7 +138,7 @@ def plot_ped(cache):
     '''
     df = pd.DataFrame.from_dict(data=cache['ped_details'], orient='index', columns=['ped'])
     bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
-    plt.hist(data=df, x = df['ped'], bins=bin_edges);
+    plt.hist(data=df, x = df['ped'], bins=bin_edges, color='g');
     plt.xlabel('Post-edit density (Agg. score: {:.3f})'.format(cache['ped']))
     plt.ylabel('Number of segments ({} seg. total)'.format(len(cache['ped_details'])));
     plt.savefig('out/{}_ped_{:.3f}_{}.png'.format(cache['user'], cache['ped'], cache['Project'], dpi=300))
