@@ -15,6 +15,7 @@ class MyWindow(QMainWindow):
     def initUI(self):
         uic.loadUi('MTChallenge.ui', self)
         self.setWindowTitle('Wördlezehla')
+        self.setWindowIcon(QIcon('Icon.png'))
 
         self.show()
 
