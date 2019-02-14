@@ -16,10 +16,11 @@ class MyWindow(QMainWindow):
         uic.loadUi('MTChallenge.ui', self)
         self.setWindowTitle('Wördlezehla')
         self.setWindowIcon(QIcon('Icon.png'))
+        self.statusBar().showMessage('Ready')
 
         self.show()
 
-    def browse_file(self):
+    def browse_file():
         text = QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
         w.input_file_line_edit.setText(text)
 
