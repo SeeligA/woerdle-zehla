@@ -5,6 +5,14 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow, QWidget
 from PyQt5.QtGui import QIcon
 
+import random # required only for dummy plot
+
+from matplotlib.backends.backend_qt5agg import FigureCanvasAgg as Canvas
+from matplotlib.figure import Figure # required only for dummy plot
+import numpy as np
+#matplotlib.use('Qt5Agg')
+
+
 
 class MyWindow(QMainWindow):
 
@@ -30,8 +38,20 @@ class MyWindow(QMainWindow):
 
 
     def run_sample():
+        '''Dummy function for sampling'''
         my_list = [1, 2, 3]
         w.textOutput.setText(str(my_list))
+
+    def run_calculation():
+        '''Dummy function for API call and calculations'''
+        my_list2 = [3, 4, 5]
+        w.textOutput.setText(str(my_list2))
+
+    def submit_entry():
+        '''Dummy function for submitting entries'''
+        my_list2 = [6, 7, 8]
+        w.textOutput.setText(str(my_list2))
+
 
 
 
@@ -39,6 +59,9 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     w = MyWindow()
+    #w.plot_button.clicked.connect(MyWindow.plot_sample)
+    w.submit_button.clicked.connect(MyWindow.submit_entry)
+    w.calculate_button.clicked.connect(MyWindow.run_calculation)
     w.sample_button.clicked.connect(MyWindow.run_sample)
     w.browse_button.clicked.connect(MyWindow.browse_file)
     w.actionOpen_File.triggered.connect(MyWindow.browse_file)
