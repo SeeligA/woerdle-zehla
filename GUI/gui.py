@@ -16,20 +16,9 @@ class MyWindow(QMainWindow):
         super(MyWindow, self).__init__()
         uic.loadUi('MTChallenge.ui', self)
 
-    def showDialog(self):
-
-        fname = QFileDialog.getOpenFileName(self, 'Open file', '/home')
-
-        if fname[0]:
-            f = open(fname[0], 'r')
-
-            with f:
-                data = f.read()
-                self.textEdit.setText(data)
-
-    def browse_file():
-        widgets.QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')
-
+    def browse_file(self):
+        text = widgets.QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
+        w.input_file_line_edit.setText(text)
 
 
 
@@ -38,7 +27,9 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     w = MyWindow()
+    w.setWindowTitle('Wördlezehla')
     w.browse_button.clicked.connect(MyWindow.browse_file)
+
     w.show()
 
     sys.exit(app.exec_())
