@@ -1,13 +1,8 @@
 import sys
 
-import PyQt5.QtWidgets as widgets
-
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-
-from PyQt5.QtWidgets import QMainWindow, QTextEdit, QFileDialog, QApplication
 from PyQt5 import uic
-#from PyQt5.uic import *
+from PyQt5.QtWidgets import QApplication, QFileDialog, QMainWindow, QWidget
+
 
 
 class MyWindow(QMainWindow):
@@ -17,7 +12,7 @@ class MyWindow(QMainWindow):
         uic.loadUi('MTChallenge.ui', self)
 
     def browse_file(self):
-        text = widgets.QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
+        text = QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
         w.input_file_line_edit.setText(text)
 
 
