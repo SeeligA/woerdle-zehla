@@ -44,10 +44,9 @@ def new_calculation(target_list, mt_list, cache):
     #cache = {'today': {'user': 'user_test'}} # for testing purposes only
     cache = pe_density(target_list, mt_list, cache)
 
-    print('Your Post-Edit Density score is {:.3f}\n'.format(cache['ped']))
     # TODO: make ba_limit and pp_limit customizable
-    statistics(cache, target_list, mt_list, verbose = True)
-    plot_ped(cache)
+    #statistics(cache, target_list, mt_list, verbose = True)
+    #plot_ped(cache)
 
     return cache
 

@@ -72,14 +72,9 @@ def new_sample(df, sample_size=50):
     # Create sample object
     filtered_items = prepare_sample_object(df, sample_size)
     sample_object, source, alpha_share = optimize_sample_object(filtered_items, sample_size)
-    print("The sample's share of translatable characters is {:.1f}%".format(alpha_share * 100))
-    x = query_yes_no('Use this sample? ')
-    while x == 0:
-        sample_object, source, alpha_share = optimize_sample_object(filtered_items, sample_size)
-        x = print("The sample's share of translatable characters is of {:.1f}%".format(alpha_share * 100))
-        x = query_yes_no('Use this sample? ')
 
-    return sample_object, source
+
+    return sample_object, source, alpha_share
 
 def match_target_mt(df):
     '''Lookup target strings and corresponding MT strings and write to 2 separate lists
@@ -105,7 +100,7 @@ def match_target_mt(df):
 
     return target_list, mt_list
 
-def new_translation(df, cache, sample_object, source, file):
+def new_translation(df, cache, sample_object, source):
     # generate parameters dictionary from input data
     parameters = collect_trans_parameters(source=source, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
     # call API
@@ -114,8 +109,8 @@ def new_translation(df, cache, sample_object, source, file):
     df = append_sample_translations(df, sample_object, target_mt)
     # Optional: Save output to file for testing on other modules
     # TODO: Make output more accessible to users
-    df.to_csv('out/after_trans_{}.csv'.format(file))
-    print('\nYour data has been written to you current working directory.\n')
+    #df.to_csv('out/after_trans_{}.csv'.format(file))
+    #print('\nYour data has been written to you current working directory.\n')
     # Matching target strings and MT strings based on index numbers
     target_list, mt_list = match_target_mt(df)
 

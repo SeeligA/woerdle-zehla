@@ -231,7 +231,7 @@ def read_filetype(file):
         print('Filetype not supported, please use either HTML or SDLXLIFF')
     return filetype
 
-def read_from_file(file, folder="data", encoding='utf-8'):
+def read_from_file(fp, encoding='utf-8'):
 
     '''Read file with translation unit data
     Arguments:
@@ -246,9 +246,9 @@ def read_from_file(file, folder="data", encoding='utf-8'):
     cache -- Dictionary with metadata pertaining to the project
     '''
 
-    file_to_open = os.path.join(folder, file)
+    #file_to_open = os.path.join(folder, file)
 
-    with open(file_to_open, 'r', encoding=encoding) as f:
+    with open(fp, 'r', encoding=encoding) as f:
         filetype = read_filetype(f)
         soup = BeautifulSoup(f, 'lxml')
     # Collect metadata from HTML table's head column
