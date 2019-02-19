@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow, QWidge
 
 from PyQt5.QtGui import QIcon
 import os.path
-import random # required only for dummy plot
 
 
 import matplotlib.pyplot as plt
@@ -16,8 +15,6 @@ from matplotlib.backends.backend_qt5agg import (
 from matplotlib.figure import Figure
 
 import numpy as np
-#from tutorial2 import ApplicationWindow
-#matplotlib.use('Qt5Agg')
 from scripts.parsing import read_from_file
 from scripts.utils import new_sample, new_translation, query_yes_no, comp_entry
 from scripts.calculation import new_calculation
@@ -35,13 +32,14 @@ class MyWindow(QMainWindow):
         uic.loadUi(os.path.join('GUI', 'MTChallenge.ui'), self)
         self.setWindowTitle('Wördlezehla')
         self.setWindowIcon(QIcon(os.path.join('GUI', 'Icon.png')))
-        #self.QLayout.setContentsMargins(11,11,11,11)
+        #self.setContentsMargins(20,20,20,20)
         self.statusBar().showMessage('Ready')
 
         self.show()
 
 
     def browse_file():
+        '''Open file dialog and write name to line edit'''
         text = QFileDialog.getOpenFileName(filter = 'HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
         w.input_file_line_edit.setText(text)
 
@@ -50,13 +48,13 @@ class MyWindow(QMainWindow):
         app.show()
 
     def run_sample():
-        '''Dummy function for sampling'''
+        '''Sample segments from input file and write alpha_share to text edit'''
         w.df, w.cache = read_from_file(w.input_file_line_edit.text())
         w.sample_object, w.source, alpha_share = new_sample(w.df, sample_size=50)
         w.textOutput.setText(str("The sample's share of translatable characters is {:.1f}%".format(alpha_share * 100)))
 
     def run_calculation():
-        '''Dummy function for API call and calculations'''
+        '''Calculate post-edit density results and print results to text edit'''
         target_list, mt_list, w.cache = new_translation(w.df, w.cache, w.sample_object, w.source)
         w.cache = new_calculation(target_list, mt_list, w.cache)
         w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
@@ -64,6 +62,7 @@ class MyWindow(QMainWindow):
 
 
     def print_details(apples_or_peaches, target_list, mt_list):
+        '''Helper function for printing PED details'''
         wrapper = textwrap.TextWrapper(subsequent_indent=' '*20)
         count = 0
         for i, j in apples_or_peaches.items():
