@@ -19,7 +19,7 @@ import numpy as np
 from scripts.parsing import read_from_file
 from scripts.utils import new_sample, new_translation, query_yes_no, comp_entry
 from scripts.calculation import new_calculation
-
+import textwrap
 
 class MyWindow(QMainWindow):
 
@@ -57,12 +57,66 @@ class MyWindow(QMainWindow):
         '''Dummy function for API call and calculations'''
         target_list, mt_list, w.cache = new_translation(w.df, w.cache, w.sample_object, w.source)
         w.cache = new_calculation(target_list, mt_list, w.cache)
-        w.textOutput.setText(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
+        w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
+        MyWindow.statistics(target_list, mt_list, verbose = True)
+
+
+    def print_details(apples_or_peaches, target_list, mt_list):
+        wrapper = textwrap.TextWrapper(subsequent_indent=' '*20)
+        count = 0
+        for i, j in apples_or_peaches.items():
+
+            string1 = mt_list[i]
+            string2 = target_list[i]
+
+            w.textOutput.append('PED = {:.3f}'.format(j))
+            w.textOutput.append('MT Output  : '+ str(wrapper.fill(text=string1)))
+            w.textOutput.append('Target Übs : '+ str(wrapper.fill(text=string2)) + '\n')
+            count += 1
+            if count == 10:
+                break
+
+    def statistics(target_list, mt_list, ba_limit = 0.4, pp_limit = 0.05, verbose = False):
+        '''Run additional statistics on Levenshtein distance results
+        Arguments:
+        cache -- containing a dictionary with Levenshtein results on a string level
+        ba_limit -- as lower limit for the bad_apples classification
+        pp_limit -- as upper limit for the peach perfect classification
+
+        Prints detailed results for review purposes
+
+        Returns:
+        bad_apples -- dictionary for benchmarking strings with high pe efforts (Bad Apples)
+        peach_perfect -- dictionary for benchmarking strings with minimal pe efforts (Peach Perfects)
+        '''
+
+        bad_apples = {k: v for k, v in w.cache['ped_details'].items() if v >= ba_limit}
+        peach_perfect = {k: v for k, v in w.cache['ped_details'].items() if v <= pp_limit}
+
+        if verbose:
+
+            if len(bad_apples) > 0:
+
+                w.textOutput.append(str('---Zu den Bad Apples (PED >= {}) gehören folgende Strings---\n'.format(ba_limit)))
+                MyWindow.print_details(bad_apples, target_list, mt_list)
+
+            else:
+                w.textOutput.append(str('---Super! Es gibt keine Bad Apples (PED <= {})\n'.format(ba_limit)))
+
+
+            if len(peach_perfect) > 0:
+                w.textOutput.append(str('---Zu den Peach Perfects (PED <= {}) gehören folgende Strings---\n'.format(pp_limit)))
+                MyWindow.print_details(peach_perfect, target_list, mt_list)
+
+            else:
+                w.textOutput.append(str('---Es gibt leider keine Peach Perfects (PED <= {})\n'.format(pp_limit)))
+
 
     def submit_entry():
         '''Dummy function for submitting entries'''
         my_list2 = [6, 7, 8]
         w.textOutput.setText(str(my_list2))
+        w.textOutput.append(str(my_list2))
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     '''Show results in new window
