@@ -8,6 +8,8 @@ from PyQt5.QtGui import QIcon
 import os.path
 import random # required only for dummy plot
 
+
+import matplotlib.pyplot as plt
 from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
 from matplotlib.backends.backend_qt5agg import (
         FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
@@ -128,15 +130,21 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.setCentralWidget(self._main)
         layout = QtWidgets.QVBoxLayout(self._main)
 
-        static_canvas = FigureCanvas(Figure(figsize=(5, 3)))
+        static_canvas = FigureCanvas(Figure(figsize=(5, 4)))
         layout.addWidget(static_canvas)
         self.addToolBar(NavigationToolbar(static_canvas, self))
 
 
         self._static_ax = static_canvas.figure.subplots()
-        #t = np.linspace(0, 10, 501)
-        #self._static_ax.plot(t, np.tan(t), ".")
+        df = pd.DataFrame.from_dict(data=w.cache['ped_details'], orient='index', columns=['ped'])
+        bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
+        xlabel = str('Post-edit density (Agg. score: {:.3f})'.format(w.cache['ped']))
+        ylabel = str('Number of segments ({} seg. total)'.format(len(w.cache['ped_details'])))
 
+
+        self._static_ax.hist(data=df, x = df['ped'], bins=bin_edges);
+        self._static_ax.set_xlabel(xlabel)
+        self._static_ax.set_ylabel(ylabel)
 
 if __name__ == '__main__':
 
