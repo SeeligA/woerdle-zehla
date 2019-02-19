@@ -50,7 +50,8 @@ class MyWindow(QMainWindow):
     def run_sample():
         '''Sample segments from input file and write alpha_share to text edit'''
         w.df, w.cache = read_from_file(w.input_file_line_edit.text())
-        w.sample_object, w.source, alpha_share = new_sample(w.df, sample_size=50)
+        sample_size = w.sample_size_box.value()
+        w.sample_object, w.source, alpha_share = new_sample(w.df, sample_size=sample_size)
         w.textOutput.setText(str("The sample's share of translatable characters is {:.1f}%".format(alpha_share * 100)))
 
     def run_calculation():
@@ -113,11 +114,11 @@ class MyWindow(QMainWindow):
                 w.textOutput.append(str('---Es gibt leider keine Peach Perfects (PED <= {})\n'.format(pp_limit)))
 
 
-    def submit_entry():
-        '''Dummy function for submitting entries'''
-        my_list2 = [6, 7, 8]
-        w.textOutput.setText(str(my_list2))
-        w.textOutput.append(str(my_list2))
+    # def submit_entry():
+    #     '''Dummy function for submitting entries'''
+    #     my_list2 = [6, 7, 8]
+    #     w.textOutput.setText(str(my_list2))
+    #     w.textOutput.append(str(my_list2))
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     '''Show results in new window
@@ -150,7 +151,7 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
     w = MyWindow()
     w.plot_button.clicked.connect(MyWindow.plot_results)
-    w.submit_button.clicked.connect(MyWindow.submit_entry)
+    #w.submit_button.clicked.connect(MyWindow.submit_entry)
     w.calculate_button.clicked.connect(MyWindow.run_calculation)
     w.sample_button.clicked.connect(MyWindow.run_sample)
     w.browse_button.clicked.connect(MyWindow.browse_file)
