@@ -45,7 +45,14 @@
     <item row="1" column="0">
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
-       <widget class="QTextEdit" name="textOutput"/>
+       <widget class="QTextEdit" name="textOutput">
+        <property name="font">
+         <font>
+          <family>Segoe UI</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -64,7 +71,7 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>1500</width>
+          <width>16777215</width>
           <height>16777215</height>
          </size>
         </property>
@@ -125,15 +132,15 @@
          <bool>true</bool>
         </property>
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
-          <height>25</height>
+          <width>16777215</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="text">
@@ -157,8 +164,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
-          <height>25</height>
+          <width>16777215</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="toolTip">
@@ -176,8 +183,8 @@
         </property>
         <property name="maximumSize">
          <size>
-          <width>90</width>
-          <height>25</height>
+          <width>16777215</width>
+          <height>16777215</height>
          </size>
         </property>
         <property name="toolTip">

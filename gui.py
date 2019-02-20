@@ -29,9 +29,9 @@ class MyWindow(QMainWindow):
 
     def initUI(self):
 
-        uic.loadUi(os.path.join('GUI', 'MTChallenge.ui'), self)
+        uic.loadUi('H:\\02_working\\05projects\\00lev\\GUI\\MTChallenge.ui', self)
         self.setWindowTitle('Wördlezehla')
-        self.setWindowIcon(QIcon(os.path.join('GUI', 'Icon.png')))
+        self.setWindowIcon(QIcon('H:\\02_working\\05projects\\00lev\\GUI\\Icon.png'))
         self.setContentsMargins(7,0,7,0)
         self.statusBar().showMessage('Ready')
 
