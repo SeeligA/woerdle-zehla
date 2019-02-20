@@ -1,15 +1,6 @@
-# from bs4 import BeautifulSoup
-# import datetime
-# from html.parser import HTMLParser
-# import json
-# import matplotlib.pyplot as plt
-# import numpy as np
-# import os.path
 import pandas as pd
 import re
-# import requests
-# import sys
-# import textwrap
+
 
 def prepare_sample_object(df, sample_size = 15):
     '''
@@ -33,7 +24,7 @@ def prepare_sample_object(df, sample_size = 15):
     # Adapt sample size, use the lesser of all the sample segments available
     # or a multiple of the sample_size
     if 0 < filtered_items.shape[0]:
-        # TODO: Review this bit and
+        # TODO: Review this bit
         sample_size = min(filtered_items.shape[0], sample_size*5)
 
         return filtered_items

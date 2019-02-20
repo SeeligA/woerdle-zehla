@@ -1,15 +1,6 @@
 from bs4 import BeautifulSoup
-# import datetime
-from html.parser import HTMLParser
-# import json
-# import matplotlib.pyplot as plt
-# import numpy as np
-import os.path
 import pandas as pd
 import re
-# import requests
-# import sys
-# import textwrap
 from scripts.utils import cleanup_strings, img_alt
 
 def collect_metadata_xml(filepath):
@@ -78,7 +69,7 @@ def parse_html_strings(soup):
     source = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveSource'})]
 
     # Create list of strings from previous version elements in target
-    # previous = collect_versions(soup) TODO: Implement to compare target with previous versions
+    # TODO: Implement to compare target with previous versions
     # Remove version elements from soup
     [element.replace_with('') for element in soup.find_all('div', attrs={'class': 'atomHistory-box'})]
     # Create list of strings for target
@@ -87,7 +78,7 @@ def parse_html_strings(soup):
     # TODO: Clean up lines with for loop
     seg_id = cleanup_strings(seg_id[1:])
     source = cleanup_strings(source[1:])
-    # previous = cleanup_strings(previous[1:]) TODO: Implement to compare target with previous versions
+    # TODO: Implement to compare target with previous versions
     target = cleanup_strings(target[1:])
     return seg_id, source, target
 
@@ -156,7 +147,6 @@ def collect_string_data(soup, filetype):
     # create new lists for segment type values
     stype_source = ['source' for i in range(len(source))]
     stype_target = ['target' for i in range(len(target))]
-    # stype_previous = ['previous' for i in range(len(previous))]
     # Convert clean lists to Series
     text_se = pd.Series(source + target, name='text')
     stype_se = pd.Series(stype_source + stype_target, name='stype')
@@ -195,30 +185,30 @@ def collect_status_data(soup):
 
     return status_list
 
-def collect_versions(soup):
-    '''Check for earlier edits and return first edit
-    Arguments:
-    soup -- Beautiful soup object representing the nested HTML data structure
-
-    Returns:
-    pre_versions -- list with first entry in previous edits
-    '''
-    # create list from target elements
-    target_elements = [element for element in soup.find_all('td', attrs={'class': 'inactiveTarget'})]
-    pre_versions = []
-
-    # loop through target elements to lookup versions
-    for i in range(len(target_elements)):
-        soup = BeautifulSoup(str(target_elements[i]), "lxml")
-        versions = [element for element in soup.find_all('div', attrs={'class': 'atomHistory-box'})]
-        # store earliest version and lookup string
-        soup = BeautifulSoup(str(versions), "lxml")
-        if soup.pre is not None:
-            pre_versions.append(soup.pre.text)
-        else:
-            pre_versions.append('')
-
-    return pre_versions
+# def collect_versions(soup):
+#     '''Check for earlier edits and return first edit
+#     Arguments:
+#     soup -- Beautiful soup object representing the nested HTML data structure
+#
+#     Returns:
+#     pre_versions -- list with first entry in previous edits
+#     '''
+#     # create list from target elements
+#     target_elements = [element for element in soup.find_all('td', attrs={'class': 'inactiveTarget'})]
+#     pre_versions = []
+#
+#     # loop through target elements to lookup versions
+#     for i in range(len(target_elements)):
+#         soup = BeautifulSoup(str(target_elements[i]), "lxml")
+#         versions = [element for element in soup.find_all('div', attrs={'class': 'atomHistory-box'})]
+#         # store earliest version and lookup string
+#         soup = BeautifulSoup(str(versions), "lxml")
+#         if soup.pre is not None:
+#             pre_versions.append(soup.pre.text)
+#         else:
+#             pre_versions.append('')
+#
+#     return pre_versions
 
 def read_filetype(file):
     '''Check for xml or html declaration'''
@@ -246,7 +236,6 @@ def read_from_file(fp, encoding='utf-8'):
     cache -- Dictionary with metadata pertaining to the project
     '''
 
-    #file_to_open = os.path.join(folder, file)
 
     with open(fp, 'r', encoding=encoding) as f:
         filetype = read_filetype(f)
@@ -258,10 +247,9 @@ def read_from_file(fp, encoding='utf-8'):
     # Collect metadata from file path and SDLXLIFF "file" element
     elif filetype == 'XML':
         # Collect project data from file path
-        filepath = os.path.abspath(file_to_open)
-        cache = collect_metadata_xml(filepath)
+        cache = collect_metadata_xml(fp)
         # Collect language IDs from SDLXLIFF "file" element
-        with open(file_to_open, 'r', encoding=encoding) as f:
+        with open(fp, 'r', encoding=encoding) as f:
             soup = BeautifulSoup(f, 'lxml')
             cache['s_lid'] = str(soup.file['source-language'].split('-')[0]).upper()
             cache['t_lid'] = str(soup.file['target-language'].split('-')[0]).upper()

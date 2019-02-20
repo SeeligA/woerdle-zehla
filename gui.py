@@ -9,15 +9,15 @@ import os.path
 
 
 import matplotlib.pyplot as plt
-from matplotlib.backends.qt_compat import QtCore, QtWidgets, is_pyqt5
+from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.backends.backend_qt5agg import (
         FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
 from matplotlib.figure import Figure
 
 import numpy as np
 from scripts.parsing import read_from_file
-from scripts.utils import new_sample, new_translation, query_yes_no, comp_entry
-from scripts.calculation import new_calculation
+from scripts.utils import new_sample, new_translation
+from scripts.calculation import pe_density
 import textwrap
 
 class MyWindow(QMainWindow):
@@ -57,7 +57,7 @@ class MyWindow(QMainWindow):
     def run_calculation():
         '''Calculate post-edit density results and print results to text edit'''
         target_list, mt_list, w.cache = new_translation(w.df, w.cache, w.sample_object, w.source)
-        w.cache = new_calculation(target_list, mt_list, w.cache)
+        w.cache = pe_density(target_list, mt_list, w.cache)
         w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
         MyWindow.statistics(target_list, mt_list, verbose = True)
 
@@ -113,12 +113,6 @@ class MyWindow(QMainWindow):
             else:
                 w.textOutput.append(str('---Es gibt leider keine Peach Perfects (PED <= {})\n'.format(pp_limit)))
 
-
-    # def submit_entry():
-    #     '''Dummy function for submitting entries'''
-    #     my_list2 = [6, 7, 8]
-    #     w.textOutput.setText(str(my_list2))
-    #     w.textOutput.append(str(my_list2))
 
 class ApplicationWindow(QtWidgets.QMainWindow):
     '''Show results in new window

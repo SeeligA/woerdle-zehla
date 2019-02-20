@@ -1,15 +1,7 @@
-# from bs4 import BeautifulSoup
-# import datetime
-# from html.parser import HTMLParser
 import json
-# import matplotlib.pyplot as plt
-# import numpy as np
 import os.path
-# import pandas as pd
-# import re
 import requests
-# import sys
-# import textwrap
+
 
 def call_api(parameters, method='post'):
     '''
@@ -20,6 +12,7 @@ def call_api(parameters, method='post'):
     method -- string specifying the method called in the request function.
               Accepts the following values: "post" (default), 'get'
               NOTE: Get method considered less secure, because data is sent as part of the URL!
+    TODO: Managing requests by splitting up requests considered too long
 
     Returns:
     target -- list of strings from translation output
@@ -99,7 +92,6 @@ def get_translation(parameters):
     '''
 
     url = 'https://api.deepl.com/v2/translate'
-    #api_url = '{0}translate{1}'.format(deepl_url_base, request_body)
     params = parameters
 
     response = requests.get(url, params=params)
@@ -122,10 +114,10 @@ def post_translation(parameters):
     '''
 
     url = 'https://api.deepl.com/v2/translate'
-    headers = {'Content-Type': 'application/x-www-form-urlencoded'}#, 'Content-Length': '87'}
+    headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
     response = requests.post(url, params=parameters, headers=headers)
     if response.status_code == 200:
-        return json.loads(response.content.decode('utf-8')) #json.loads(response.content.decode('utf-8'))
+        return json.loads(response.content.decode('utf-8'))
     else:
         return None
