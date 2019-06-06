@@ -13,6 +13,7 @@ __pycache__/
 
 gui.exe
 Icon.ico
+.idea
 
 entry.csv
 build/

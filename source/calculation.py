@@ -1,13 +1,14 @@
-
-
 def levenshtein(s1, s2):
-    '''Calculate Levenshtein distance based on string1 and string2
-    Arguments:
-    s1 and s2 as str() where s1 corresponds to the target segment and s2 to the mt segment
+    """Calculate Levenshtein distance based on string1 and string2
 
-    returns Levenshtein distance as int()
+    Arguments:
+        s1 and s2 as str() where s1 corresponds to the target segment and s2 to the mt segment
+
+    Returns:
+        Levenshtein distance as int()
+
     Source: Wikibooks
-    '''
+    """
     if len(s1) < len(s2):
         return levenshtein(s2, s1)
 
@@ -19,8 +20,9 @@ def levenshtein(s1, s2):
     for i, c1 in enumerate(s1):
         current_row = [i + 1]
         for j, c2 in enumerate(s2):
-            insertions = previous_row[j + 1] + 1 # j+1 instead of j since previous_row and current_row are one character longer
-            deletions = current_row[j] + 1       # than s2
+            insertions = previous_row[
+                             j + 1] + 1  # j+1 instead of j since previous_row and current_row are one character longer
+            deletions = current_row[j] + 1  # than s2
             substitutions = previous_row[j] + (c1 != c2)
             current_row.append(min(insertions, deletions, substitutions))
         previous_row = current_row
@@ -29,14 +31,15 @@ def levenshtein(s1, s2):
 
 
 def pe_density(s1, s2, cache):
-    '''Calculate post edit density for two lists of strings
-    Arguments:
-    s1, s2 as ordered lists with strings
+    """Calculate post edit density for two lists of strings
 
-    Returns
-    tuple containing Post-Edit density results on document level (as int()) and string level (as dict())
-    updated cache with ped result
-    '''
+    Arguments:
+        s1, s2 as ordered lists with strings
+
+    Returns:
+        cache -- tuple containing Post-Edit density results on document level (as int()) and string level (as dict())
+                 updated cache with ped result
+    """
 
     lev_count = float()
     char_count = int()
@@ -55,9 +58,9 @@ def pe_density(s1, s2, cache):
         char_count += max_char
         lev_count += lev
 
-        ped_details[i] = lev/max_char
+        ped_details[i] = lev / max_char
 
-    ped = lev_count/char_count
+    ped = lev_count / char_count
     cache['ped'] = ped
     cache['ped_details'] = ped_details
 

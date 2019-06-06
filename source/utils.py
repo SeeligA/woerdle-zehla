@@ -1,23 +1,19 @@
-import datetime
-import pandas as pd
-import sys
-from scripts.api import call_api, collect_trans_parameters
-from scripts.sampling import append_sample_translations, optimize_sample_object, prepare_sample_object
+from source.api import call_api, collect_trans_parameters
+from source.sampling import append_sample_translations, optimize_sample_object, prepare_sample_object
 
 
 def cleanup_strings(string_list):
-    '''Remove additional whitespace'''
+    """Remove additional whitespace"""
     clean = [w.replace('\n', '') for w in string_list]
     return clean
 
 
 def img_alt(tag):
-    '''Filter for 1st img element with alt text after table data tag'''
-    return tag.has_attr('alt') and tag.parent.name=='td'
+    """Filter for 1st img element with alt text after table data tag"""
+    return tag.has_attr('alt') and tag.parent.name == 'td'
 
 
 def new_sample(df, sample_size=50):
-
     # Create sample object
     filtered_items = prepare_sample_object(df, sample_size)
     sample_object, source, alpha_share = optimize_sample_object(filtered_items, sample_size)
@@ -26,17 +22,18 @@ def new_sample(df, sample_size=50):
 
 
 def match_target_mt(df):
-    '''Lookup target strings and corresponding MT strings and write to 2 separate lists
+    """Lookup target strings and corresponding MT strings and write to 2 separate lists
+
     Arguments:
-    df -- DataFrame from input module, referencing seg_id, text, and type
+        df -- DataFrame from input module, referencing seg_id, text, and type
 
-    Returns
-    target_list, mt_list -- two aligned lists containing target strings and mt strings
-    '''
+    Returns:
+        target_list, mt_list -- two aligned lists containing target strings and mt strings
+    """
 
-    #Note for testing: Include assert statement to make sure that lists are aligned (e.g. count/sum over seg_id)
-    is_target = df['stype']=='target'
-    is_mt = df['stype']=='MT'
+    # Note for testing: Include assert statement to make sure that lists are aligned (e.g. count/sum over seg_id)
+    is_target = df['stype'] == 'target'
+    is_mt = df['stype'] == 'MT'
 
     mt_list = list(df[is_mt]['text'].values)
     target_list = []
@@ -48,6 +45,7 @@ def match_target_mt(df):
         target_list.append(df[is_target].loc[idx[i]]['text'])
 
     return target_list, mt_list
+
 
 def new_translation(df, cache, sample_object, source):
     # generate parameters dictionary from input data

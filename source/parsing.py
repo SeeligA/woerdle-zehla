@@ -1,16 +1,19 @@
-from bs4 import BeautifulSoup
-import pandas as pd
 import re
-from scripts.utils import cleanup_strings, img_alt
+
+import pandas as pd
+from bs4 import BeautifulSoup
+from source.utils import cleanup_strings, img_alt
+
 
 def collect_metadata_xml(filepath):
-    '''Collect metadata from filepath:
+    """Collect metadata from filepath
+
     Arguments:
-    filepath = String specifying the SDLXLIFF input file on F:
+        filepath = String specifying the SDLXLIFF input file on F:
 
     Returns:
-    cache -- Dictionary for further referencing and translation calls
-    '''
+        cache -- Dictionary for further referencing and translation calls
+    """
     cache = {}
     # Extract Client name and id
     regex = re.compile('((?<=ab Dez 2010\\\)[^\\\]+)')
@@ -28,25 +31,27 @@ def collect_metadata_xml(filepath):
 
     return cache
 
+
 def collect_metadata_html(soup):
-    '''Read header of the bilingual table and parses pertintent project information
+    """Read header of the bilingual table and parses pertinent project information
+
     Arguments:
-    Soup -- BeautifulSoupObject created from Across HTML export
+        Soup -- BeautifulSoupObject created from Across HTML export
 
     Returns:
-    cache -- Dictionary for further referencing and translation calls
-    '''
+        cache -- Dictionary for further referencing and translation calls
+    """
     # Parse source and target column header
     trs = soup.find_all('tr')
     tds_m = trs[0].find_all('td')
     meta = tds_m[1].find_all(string=True) + tds_m[3].find_all(string=True)
 
     # Parse string data from column headers
-    cache = {}
+    cache = dict()
     cache['Project'] = meta[1].split(sep=': ')[1]
     cache['Relation'] = meta[2].split(sep=': ')[1]
     cache['Document'] = meta[3].split(sep=': ')[1]
-    #TODO : Remove user entry here
+    # TODO : Remove user entry here
     cache['user'] = meta[5].split(sep=': ')[1]
     s_lid = meta[0].split(sep=' ')[0]
     t_lid = meta[4].split(sep=' ')[0]
@@ -62,6 +67,7 @@ def collect_metadata_html(soup):
     cache['t_lid'] = lid_trans.get(t_lid, str("'{}' not supported".format(t_lid)))
 
     return cache
+
 
 def parse_html_strings(soup):
     # Create lists of strings for segment id and source
@@ -82,23 +88,25 @@ def parse_html_strings(soup):
     target = cleanup_strings(target[1:])
     return seg_id, source, target
 
+
 def parse_xml_strings(soup):
-    '''Read segment strings and segments status information
+    """Read segment strings and segments status information
+
     Arguments:
-    soup -- BeautifulSoup object generated from input
+        soup -- BeautifulSoup object generated from input
 
     Returns:
-    seg_id -- List containing segment ids
-    source -- List containing source strings
-    target -- List containing target strings
-    status_list -- List containing segment status information
-    '''
+        seg_id -- List containing segment ids
+        source -- List containing source strings
+        target -- List containing target strings
+        status_list -- List containing segment status information
+    """
     seg_id = []
     source = []
     target = []
     status_list = []
     # Find mrk elements with mtype attribute value "seg"
-    mrk = soup.find_all('mrk', attrs={'mtype':'seg'})
+    mrk = soup.find_all('mrk', attrs={'mtype': 'seg'})
     for i in mrk:
         for parent in i.parents:
             if parent.name == 'target':
@@ -115,20 +123,20 @@ def parse_xml_strings(soup):
 
 
 def collect_string_data(soup, filetype):
-    '''Read segment ID, source and target strings
+    """Read segment ID, source and target strings
 
     Arguments:
-    soup -- BeautifulSoupObject created from Across HTML export
-    filetype -- String specifying supported file type. Takes either 'HTML' or "XML"
+        soup -- BeautifulSoupObject created from Across HTML export
+        filetype -- String specifying supported file type. Takes either 'HTML' or "XML"
 
     Function has been updated to account for XML-based SDLXLIFF files
 
     Returns:
-    seg_id_se -- Series with segment id data
-    text_se -- Series with string data
-    stype_se -- Series referencing segment type (source, target, previous)
-    status_se -- Series object containing status info
-    '''
+        seg_id_se -- Series with segment id data
+        text_se -- Series with string data
+        stype_se -- Series referencing segment type (source, target, previous)
+        status_se -- Series object containing status info
+    """
     if filetype == 'HTML':
         seg_id, source, target = parse_html_strings(soup)
         # function call to extract status data from third column
@@ -136,6 +144,9 @@ def collect_string_data(soup, filetype):
 
     elif filetype == 'XML':
         seg_id, source, target, status_list = parse_xml_strings(soup)
+
+    else:
+        return None
 
     status_se = pd.Series(status_list)
     status_se.name = 'status'
@@ -153,10 +164,11 @@ def collect_string_data(soup, filetype):
 
     return seg_id_se, text_se, stype_se, status_se
 
+
 def collect_status_data(soup):
-    '''Select status attribute in each row and write to list
+    """Select status attribute in each row and write to list
     Arguments
-    trs -- Rows in data table
+        trs -- Rows in data table
 
     Loops through the table data elements in each row. Calls img_alt function
     to find first img alt item in each element, which will include status info.
@@ -164,9 +176,9 @@ def collect_status_data(soup):
 
     TODO: Implement list comprehension to write img_alt item.
 
-    Returns
-    status_list -- List object containing status info
-    '''
+    Returns:
+        status_list -- List object containing status info
+    """
 
     trs = soup.find_all('tr')
     status_list = []
@@ -185,14 +197,15 @@ def collect_status_data(soup):
 
     return status_list
 
+
 # def collect_versions(soup):
-#     '''Check for earlier edits and return first edit
+#     """Check for earlier edits and return first edit
 #     Arguments:
 #     soup -- Beautiful soup object representing the nested HTML data structure
 #
 #     Returns:
 #     pre_versions -- list with first entry in previous edits
-#     '''
+#     """
 #     # create list from target elements
 #     target_elements = [element for element in soup.find_all('td', attrs={'class': 'inactiveTarget'})]
 #     pre_versions = []
@@ -211,31 +224,30 @@ def collect_status_data(soup):
 #     return pre_versions
 
 def read_filetype(file):
-    '''Check for xml or html declaration'''
+    """Check for xml or html declaration"""
     first_line = file.readline()
     if re.match('\\ufeff<\?xml', first_line):
-        filetype = 'XML'
+        return 'XML'
     elif re.match('<HTML', first_line):
-        filetype = 'HTML'
+        return 'HTML'
     else:
         print('Filetype not supported, please use either HTML or SDLXLIFF')
-    return filetype
+        return None
+
 
 def read_from_file(fp, encoding='utf-8'):
+    """Read file with translation unit data
 
-    '''Read file with translation unit data
     Arguments:
-    file -- file to be parsed.
-            Note: At the moment the parser accepts both sdlxliff and html files (with/without change history)
-    folder -- defaults to "data"
-    encoding -- defaults to utf-8
+        fp -- path to file to be parsed. At the moment the parser accepts both sdlxliff and
+              html files (with/without change history)
+        encoding -- defaults to utf-8
     TODO: Check for other encodings,
           idea: Lookup charset from HTML Header / XML declaration and return in cache
     Returns:
-    df -- DataFrame object with parsed text, segment type and status information which uses seg_id as index
-    cache -- Dictionary with metadata pertaining to the project
-    '''
-
+        df -- DataFrame object with parsed text, segment type and status information which uses seg_id as index
+        cache -- Dictionary with metadata pertaining to the project
+    """
 
     with open(fp, 'r', encoding=encoding) as f:
         filetype = read_filetype(f)
@@ -253,16 +265,19 @@ def read_from_file(fp, encoding='utf-8'):
             soup = BeautifulSoup(f, 'lxml')
             cache['s_lid'] = str(soup.file['source-language'].split('-')[0]).upper()
             cache['t_lid'] = str(soup.file['target-language'].split('-')[0]).upper()
+    else:
+        return None
+
     # function call to extract string data from source and target columns
     seg_id, text_se, stype_se, status_se = collect_string_data(soup, filetype)
 
     for i in range(2):
         # copy values from Series and add them as rows below
-        status_se = status_se.append(status_se, ignore_index = True)
+        status_se = status_se.append(status_se, ignore_index=True)
 
     # Merge Series to DataFrame
     columns = ['text', 'stype', 'status']
     data_tuples = list(zip(text_se, stype_se, status_se))
-    df = pd.DataFrame(data_tuples, columns = columns, index=seg_id)
+    df = pd.DataFrame(data_tuples, columns=columns, index=seg_id)
 
     return df, cache
