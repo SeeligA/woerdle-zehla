@@ -86,7 +86,7 @@ def get_translation(parameters):
     Send request via API and collect response
 
     Arguments:
-        Parameters -- dictionary referencing required and optional parameters
+        parameters -- dictionary referencing required and optional parameters
 
     Returns:
         API response in nested dict format with detected source language and translation as text.
@@ -109,7 +109,7 @@ def post_translation(parameters):
     Send request via API and collect response
 
     Arguments:
-        Parameters -- dictionary referencing required and optional parameters
+        parameters -- dictionary referencing required and optional parameters
 
     Returns:
         API response in nested dict format with detected source language and translation as text.

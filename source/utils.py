@@ -48,13 +48,40 @@ def match_target_mt(df):
 
 
 def new_translation(df, cache, sample_object, source):
-    # generate parameters dictionary from input data
-    parameters = collect_trans_parameters(source=source, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
-    # call API
-    target_mt = call_api(parameters)
+    """
+    Helper function managing API calls to generate MT output from source strings
+
+    Arguments:
+        df -- Source object DataFrame with columns 'seg_id', 'text', 'stype', 'status'
+        cache -- Dictionary of metadata for indexing purposes and translation calls
+        sample_object -- DataFrame view of source object
+        source -- List of strings selected for translations
+
+    Return:
+         target_list -- List of target strings
+         mt_list -- List of MT output strings
+    """
+    # Setting text parameter limit according to DeepL API recommendations
+    # This is to prevent URI too long (414) errors
+    limit = 50
+    base = limit
+    target_mt = list()
+    # Check if list exceeds limit:
+    while len(source) - base > 0:
+        # Create slices from list with source segments
+        batch = source[base-limit:base]
+        # Generate parameters dictionary from batch data
+        parameters = collect_trans_parameters(source=batch, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
+        target_mt += call_api(parameters)
+        base += limit
+
+    batch = source[base-limit:len(source)]
+    parameters = collect_trans_parameters(source=batch, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
+    target_mt += call_api(parameters)
+
     # Update DataFrame with translations as new rows
     df = append_sample_translations(df, sample_object, target_mt)
     # Matching target strings and MT strings based on index numbers
     target_list, mt_list = match_target_mt(df)
 
-    return target_list, mt_list, cache
+    return target_list, mt_list

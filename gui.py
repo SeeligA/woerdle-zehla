@@ -53,7 +53,7 @@ class MyWindow(QMainWindow):
 
     def run_calculation(self):
         """Calculate post-edit density results and print results to text edit"""
-        target_list, mt_list, w.cache = new_translation(w.df, w.cache, w.sample_object, w.source)
+        target_list, mt_list = new_translation(w.df, w.cache, w.sample_object, w.source)
         w.cache = pe_density(target_list, mt_list, w.cache)
         w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
         w.statistics(target_list, mt_list, verbose = True)
