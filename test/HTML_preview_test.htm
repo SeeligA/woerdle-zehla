@@ -1,0 +1,316 @@
+<HTML><HEAD>
+<META content="text/html; charset=UTF-8" http-equiv=Content-Type>
+<STYLE id=DocViewCss>TD {
+	VERTICAL-ALIGN: top
+}
+TH {
+	VERTICAL-ALIGN: top
+}
+.ATOM {
+	WHITE-SPACE: pre-wrap
+}
+.inactiveNumbering {
+	BORDER-TOP: 0px; BORDER-RIGHT: gray 1px solid; VERTICAL-ALIGN: middle; BORDER-BOTTOM: gray 1px solid; TEXT-ALIGN: right; BORDER-LEFT: 0px
+}
+.inactiveSource {
+	BORDER-TOP: 0px; BORDER-RIGHT: gray 1px solid; BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: 0px
+}
+.inactiveState {
+	BORDER-TOP: 0px; BORDER-RIGHT: gray 1px solid; BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: 0px
+}
+.inactiveTarget {
+	BORDER-TOP: 0px; BORDER-RIGHT: 0px; BORDER-BOTTOM: gray 1px solid; BORDER-LEFT: 0px
+}
+.activeNumbering {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; VERTICAL-ALIGN: middle; BORDER-BOTTOM: blue 1px solid; TEXT-ALIGN: right; BORDER-LEFT: 0px
+}
+.activeSource {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.activeState {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.activeTarget {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.multiSelNumbering {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; VERTICAL-ALIGN: middle; BORDER-BOTTOM: blue 1px solid; TEXT-ALIGN: right; BORDER-LEFT: 0px
+}
+.multiSelSource {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.multiSelState {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.multiSelTarget {
+	BORDER-TOP: 0px; BORDER-RIGHT: blue 1px solid; BORDER-BOTTOM: blue 1px solid; BORDER-LEFT: 0px
+}
+.comment-box {
+	WHITE-SPACE: normal; PADDING-BOTTOM: 2px; PADDING-TOP: 3px; PADDING-LEFT: 5px; PADDING-RIGHT: 10px
+}
+.atomHistory-box {
+	WHITE-SPACE: normal; PADDING-BOTTOM: 2px; PADDING-TOP: 3px; PADDING-LEFT: 5px; PADDING-RIGHT: 10px
+}
+.overline-left-red {
+	BACKGROUND-IMAGE: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADAQMAAACDJEzCAAAAA1BMVEX/AAAZ4gk3AAAACklEQVQI12MAAwAABgAB6AoqpAAAAABJRU5ErkJggg==); WHITE-SPACE: nowrap; BACKGROUND-REPEAT: no-repeat; BACKGROUND-POSITION: left top
+}
+.overline-right-red {
+	BACKGROUND-IMAGE: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADAQMAAACDJEzCAAAAA1BMVEX/AAAZ4gk3AAAACklEQVQI12MAAwAABgAB6AoqpAAAAABJRU5ErkJggg==); WHITE-SPACE: nowrap; BACKGROUND-REPEAT: no-repeat; BACKGROUND-POSITION: right top
+}
+.overline-left-blue {
+	BACKGROUND-IMAGE: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADAQMAAACDJEzCAAAAA1BMVEUAAIBKwr76AAAACklEQVQI12MAAwAABgAB6AoqpAAAAABJRU5ErkJggg==); WHITE-SPACE: nowrap; BACKGROUND-REPEAT: no-repeat; BACKGROUND-POSITION: left top
+}
+.overline-right-blue {
+	BACKGROUND-IMAGE: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAIAAAADAQMAAACDJEzCAAAAA1BMVEUAAIBKwr76AAAACklEQVQI12MAAwAABgAB6AoqpAAAAABJRU5ErkJggg==); WHITE-SPACE: nowrap; BACKGROUND-REPEAT: no-repeat; BACKGROUND-POSITION: right top
+}
+
+@media Print    
+{
+.comment-body {
+	FONT-SIZE: 10pt; BORDER-TOP: #000000 1px solid; FONT-FAMILY: "Segoe UI", "Helvetica Neue Light", "Helvetica Neue", Helvetica, "Lucida Grande", sans-serif; BORDER-RIGHT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid; COLOR: black; PADDING-BOTTOM: 5px; PADDING-TOP: 2px; PADDING-LEFT: 5px; BORDER-LEFT: #000000 1px solid; PADDING-RIGHT: 5px
+}
+.comment-body H1 {
+	FONT-SIZE: 13pt; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px; PADDING-RIGHT: 0px
+}
+.comment-body H2 {
+	FONT-SIZE: 11pt; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px; PADDING-RIGHT: 0px
+}
+.comment-body UL {
+	PADDING-LEFT: 2em; MARGIN: 0.2em 0px
+}
+.comment-body OL {
+	PADDING-LEFT: 2em; MARGIN: 0.2em 0px
+}
+.comment-body-native {
+	BACKGROUND-COLOR: #e2f0fe
+}
+.comment-body .comment-title {
+	FONT-SIZE: 10pt; COLOR: black; PADDING-TOP: 2px
+}
+.atomHistory-body {
+	FONT-SIZE: 10pt; BORDER-TOP: #000000 1px solid; FONT-FAMILY: Segoe UI; BORDER-RIGHT: #000000 1px solid; BORDER-BOTTOM: #000000 1px solid; COLOR: black; PADDING-BOTTOM: 5px; PADDING-TOP: 2px; PADDING-LEFT: 5px; BORDER-LEFT: #000000 1px solid; PADDING-RIGHT: 5px
+}
+.atomHistory-box .atomHistory-title {
+	FONT-SIZE: 10pt; COLOR: black; PADDING-TOP: 2px
+}
+
+}
+
+@media Screen    
+{
+.comment-body {
+	FONT-SIZE: 10pt; FONT-FAMILY: "Segoe UI", "Helvetica Neue Light", "Helvetica Neue", Helvetica, "Lucida Grande", sans-serif; COLOR: gray; PADDING-BOTTOM: 5px; PADDING-TOP: 2px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; BACKGROUND-COLOR: #fffabf; box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3); -moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3)
+}
+.comment-body H1 {
+	FONT-SIZE: 13pt; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px; PADDING-RIGHT: 0px
+}
+.comment-body H2 {
+	FONT-SIZE: 11pt; PADDING-BOTTOM: 0px; PADDING-TOP: 0px; PADDING-LEFT: 0px; MARGIN: 0px; PADDING-RIGHT: 0px
+}
+.comment-body UL {
+	PADDING-LEFT: 2em; MARGIN: 0.2em 0px
+}
+.comment-body OL {
+	PADDING-LEFT: 2em; MARGIN: 0.2em 0px
+}
+.comment-body-native {
+	BACKGROUND-COLOR: #e2f0fe
+}
+.comment-body .comment-title {
+	COLOR: black; PADDING-TOP: 2px
+}
+.atomHistory-body {
+	FONT-SIZE: 10pt; FONT-FAMILY: Segoe UI; COLOR: gray; PADDING-BOTTOM: 5px; PADDING-TOP: 2px; PADDING-LEFT: 5px; PADDING-RIGHT: 5px; BACKGROUND-COLOR: #bfffc4; box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3); -moz-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0px 2px 3px 0px rgba(0, 0, 0, 0.3)
+}
+.atomHistory-box .atomHistory-title {
+	COLOR: black; PADDING-TOP: 2px
+}
+
+}
+</STYLE>
+</HEAD>
+<BODY id=idBody style="OVERFLOW: auto" leftMargin=0 topMargin=0 marginwidth="0" marginheight="0" name="idBody">
+<TABLE style="WORD-WRAP: break-word; BORDER-TOP: gray 1px solid; BORDER-RIGHT: 0px; TABLE-LAYOUT: fixed; BORDER-BOTTOM: 0px; BORDER-LEFT: 0px" cellSpacing=0 cellPadding=3 width="100%" border=1>
+<TBODY>
+<TR>
+<TD class=inactiveNumbering width=22>&nbsp;</TD>
+<TD class=inactiveSource><IMG src="HTML_preview_test_files\flag_image_7_16777215.tmp"><SPAN style="FONT-SIZE: 13pt; FONT-FAMILY: Segoe UI; COLOR: #000000"><BR>Englisch (Vereinigte Staaten)<BR>Projekt: TESTRUN_5 <BR>Relation: TEST_MT-INTEGRATION<BR>Dokument: HTML_preview_test.docx</SPAN></TD>
+<TD class=inactiveState width=24>&nbsp;</TD>
+<TD class=inactiveTarget><IMG src="HTML_preview_test_files\flag_image_17_16777215.tmp"><SPAN style="FONT-SIZE: 13pt; FONT-FAMILY: Segoe UI; COLOR: #000000"><BR>Deutsch (Deutschland)<BR>Projekt Manager: Arndt Seelig<BR><BR>Datum: 17.06.2019</SPAN></TD></TR>
+<TR id=103055808>
+<TD id=103055808 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>1</SPAN></PRE></TD>
+<TD id=103055808 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>This is a text file.</SPAN></PRE></DIV></TD>
+<TD id=103055808 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103055808 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103055808 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Hier haben wir eine Textdatei.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 16:59 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Hier haben wir eine Textdatei.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103055940>
+<TD id=103055940 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>2</SPAN></PRE></TD>
+<TD id=103055940 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>This file has been created in Across.</SPAN></PRE></DIV></TD>
+<TD id=103055940 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103055940 class=imgAtom alt="Übersetzt (Maschinell übersetzt)" src="HTML_preview_test_files\imgExtend18.png"></TD>
+<TD id=103055940 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Diese Datei wurde in Across erstellt.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Diese Datei wurde in Across erstellt.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056072>
+<TD id=103056072 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>3</SPAN></PRE></TD>
+<TD id=103056072 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>It features a header with project data.</SPAN></PRE></DIV></TD>
+<TD id=103056072 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056072 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103056072 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Es verfügt über einen Header mit Projektdaten.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:02 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Es verfügt über einen Header mit Projektdaten.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Es verfügt über einen Kopf mit Projektdaten.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056204>
+<TD id=103056204 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>4</SPAN></PRE></TD>
+<TD id=103056204 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>The segment ID column is used for indexing purposes.</SPAN></PRE></DIV></TD>
+<TD id=103056204 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056204 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103056204 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Die Segment ID-Spalte dient der Indizierung.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:02 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Die Segment ID-Spalte dient der Indizierung.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Die Spalte Segment ID dient der Indizierung.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056336>
+<TD id=103056336 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>5</SPAN></PRE></TD>
+<TD id=103056336 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Notice the status column between source and target indicating the segment status.</SPAN></PRE></DIV></TD>
+<TD id=103056336 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056336 class=imgAtom alt="Übersetzt (Maschinell übersetzt)" src="HTML_preview_test_files\imgExtend18.png"></TD>
+<TD id=103056336 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Beachten Sie die Statusspalte zwischen Quelle und Ziel, die den Segmentstatus anzeigt.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Beachten Sie die Statusspalte zwischen Quelle und Ziel, die den Segmentstatus anzeigt.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056468>
+<TD id=103056468 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>6</SPAN></PRE></TD>
+<TD id=103056468 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Displaying comment and version history is optional.</SPAN></PRE></DIV></TD>
+<TD id=103056468 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056468 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"><BR><IMG id=103056468 class=imgAtom alt=Kommentiert src="HTML_preview_test_files\imgExtend1.png"></TD>
+<TD id=103056468 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Kommentare und Versionsverlauf können optional angezeigt werden.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:04 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Kommentare und Versionsverlauf können optional angezeigt werden.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:04 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Kommentare und Versionshistorie können optional angezeigt werden.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=comment-box>
+<DIV class=comment-body>
+<DIV class=author-date>17.06.2019 17:03 · Arndt Seelig Kommentar hinzugefügt</DIV>
+<DIV class=comment-title>Typo</DIV>
+<DIV class=comment-text>This should probably read "comments"</DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Die Anzeige von Kommentar und Versionshistorie ist optional.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056600>
+<TD id=103056600 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>7</SPAN></PRE></TD>
+<TD id=103056600 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Version history data can be used to create compares from existing MT output.</SPAN></PRE></DIV></TD>
+<TD id=103056600 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056600 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103056600 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Versionsverlaufs-Daten können verwendet werden, um Compares von bestehendem MT-Output zu erstellen.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:05 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Versionsverlaufs-Daten können verwendet werden, um Compares von bestehendem MT-Output zu erstellen.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Versionshistorie-Daten können verwendet werden, um Vergleiche aus bestehenden MT-Ausgaben zu erstellen.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056732>
+<TD id=103056732 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>8</SPAN></PRE></TD>
+<TD id=103056732 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>The tool assumes that the first version in a segment shows the MT output</SPAN></PRE></DIV></TD>
+<TD id=103056732 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056732 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103056732 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Das Tool geht davon aus, dass die erste Version in einem Segment der MT-Output ist,</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:10 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Das Tool geht davon aus, dass die erste Version in einem Segment der MT-Output ist,</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:05 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Das Tool geht davon aus, dass die erste Version in einem Segment die MT-Ausgabe anzeigt,</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:05 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Das Tool geht davon aus, dass die erste Version in einem Segment die MT-Ausgabe anzeigt.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Das Tool geht davon aus, dass die erste Version in einem Segment die MT-Ausgabe anzeigt</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056864>
+<TD id=103056864 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>9</SPAN></PRE></TD>
+<TD id=103056864 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>and compares them against the current version</SPAN></PRE></DIV></TD>
+<TD id=103056864 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056864 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103056864 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>und vergleicht diese mit der aktuellen Version</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:06 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>und vergleicht diese mit der aktuellen Version</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>und vergleicht sie mit der aktuellen Version</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103056996>
+<TD id=103056996 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>10</SPAN></PRE></TD>
+<TD id=103056996 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Empty and locked segments are ignored.</SPAN></PRE></DIV></TD>
+<TD id=103056996 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103056996 class=imgAtom alt=Unbearbeitet src="HTML_preview_test_files\imgCustom0.png"></TD>
+<TD id=103056996 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left">&nbsp;</DIV></TD></TR>
+<TR id=103057128>
+<TD id=103057128 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>11</SPAN></PRE></TD>
+<TD id=103057128 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>As are comments (WIP).</SPAN></PRE></DIV></TD>
+<TD id=103057128 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103057128 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103057128 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Ebenso wie Kommentare (in Arbeit).</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:01 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Ebenso wie Kommentare (in Arbeit).</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Ebenso wie Kommentare (WIP).</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR>
+<TR id=103057260>
+<TD id=103057260 class=inactiveNumbering style="BACKGROUND-COLOR: #dfdfdf" width=22><PRE class=atom style="FONT-SIZE: 9pt; FONT-FAMILY: 'Segoe UI', 'Segoe UI'; MARGIN: 2px 0px 0px"><SPAN class=atom>12</SPAN></PRE></TD>
+<TD id=103057260 class=inactiveSource style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>This is a test file.</SPAN></PRE></DIV></TD>
+<TD id=103057260 class=inactiveState style="BACKGROUND-COLOR: #dfdfdf" width=24><IMG id=103057260 class=imgAtom alt=Übersetzt src="HTML_preview_test_files\imgCustom2.png"></TD>
+<TD id=103057260 class=inactiveTarget style="BACKGROUND-COLOR: #dfdfdf" dir=ltr>
+<DIV id=contents style="WIDTH: 100%; FLOAT: left; CLEAR: left"><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Hier haben wir eine Testdatei.</SPAN></PRE>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:01 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Hier haben wir eine Testdatei.</SPAN></PRE></DIV></DIV></DIV>
+<DIV class=atomHistory-box>
+<DIV class=atomHistory-body>
+<DIV class=atomHistory-title>17.06.2019 17:00 · Arndt Seelig (Bearbeitet) Änderung durchgeführt</DIV>
+<DIV class=atomHistory-content><PRE class=atom style="FONT-SIZE: 11pt; FONT-FAMILY: 'Calibri', 'Segoe UI'; VERTICAL-ALIGN: bottom; MARGIN: 2px 0px 0px"><SPAN class=atom>Dies ist eine Testdatei.</SPAN></PRE></DIV></DIV></DIV></DIV></TD></TR></TBODY></TABLE></BODY></HTML>
