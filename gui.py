@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 
 import numpy as np
 from source.parsing import read_from_file
-from source.utils import new_sample, new_translation
+from source.utils import new_sample, new_translation, match_target_mt
 from source.calculation import pe_density
 import textwrap
 import os.path
@@ -53,10 +53,17 @@ class MyWindow(QMainWindow):
 
     def run_calculation(self):
         """Calculate post-edit density results and print results to text edit"""
-        target_list, mt_list = new_translation(w.df, w.cache, w.sample_object, w.source)
+
+        if w.ignore_history_false.isChecked:
+            w.df, w.cache = read_from_file(w.input_file_line_edit.text(), versions=True)
+            target_list, mt_list = match_target_mt(w.df)
+
+        else:
+            target_list, mt_list = new_translation(w.df, w.cache, w.sample_object, w.source)
+
         w.cache = pe_density(target_list, mt_list, w.cache)
         w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
-        w.statistics(target_list, mt_list, verbose = True)
+        w.statistics(target_list, mt_list, verbose=True)
 
     def print_details(self, apples_or_peaches, target_list, mt_list):
         """Helper function for printing PED details"""
@@ -74,7 +81,7 @@ class MyWindow(QMainWindow):
             if count == 10:
                 break
 
-    def statistics(self, target_list, mt_list, ba_limit = 0.4, pp_limit = 0.05, verbose = False):
+    def statistics(self, target_list, mt_list, ba_limit=0.4, pp_limit=0.05, verbose=False):
         """Run additional statistics on Levenshtein distance results
 
         Arguments:

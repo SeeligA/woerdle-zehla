@@ -106,31 +106,24 @@
       <property name="horizontalSpacing">
        <number>6</number>
       </property>
-      <item row="6" column="0">
-       <widget class="QPushButton" name="plot_button">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
+      <property name="verticalSpacing">
+       <number>9</number>
+      </property>
+      <item row="7" column="0">
+       <widget class="QSpinBox" name="sample_size_box">
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show visualization of scoring results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>Select no. of segments for sampling</string>
         </property>
-        <property name="text">
-         <string>Plot</string>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>125</number>
+        </property>
+        <property name="value">
+         <number>50</number>
         </property>
        </widget>
-      </item>
-      <item row="8" column="0">
-       <spacer name="verticalSpacer">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
       </item>
       <item row="0" column="0">
        <widget class="QPushButton" name="browse_button">
@@ -163,26 +156,7 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="0">
-       <widget class="QPushButton" name="calculate_button">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>16777215</width>
-          <height>16777215</height>
-         </size>
-        </property>
-        <property name="toolTip">
-         <string>Calculate post-edit distance score</string>
-        </property>
-        <property name="text">
-         <string>Calculate</string>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
+      <item row="8" column="0">
        <widget class="QPushButton" name="sample_button">
         <property name="enabled">
          <bool>true</bool>
@@ -204,23 +178,52 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
-       <widget class="QSpinBox" name="sample_size_box">
+      <item row="16" column="0">
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="13" column="0">
+       <widget class="QPushButton" name="calculate_button">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
         <property name="toolTip">
-         <string>Select no. of segments for sampling</string>
+         <string>Calculate post-edit distance score</string>
         </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>125</number>
-        </property>
-        <property name="value">
-         <number>50</number>
+        <property name="text">
+         <string>Calculate</string>
         </property>
        </widget>
       </item>
-      <item row="2" column="0">
+      <item row="14" column="0">
+       <widget class="QPushButton" name="plot_button">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Show visualization of scoring results&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="text">
+         <string>Plot</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="0">
        <widget class="QLabel" name="sample_size_label">
         <property name="text">
          <string>Sample Size:</string>
@@ -228,20 +231,42 @@
        </widget>
       </item>
       <item row="1" column="0">
-       <spacer name="verticalSpacer_2">
+       <widget class="Line" name="line_2">
         <property name="orientation">
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeType">
-         <enum>QSizePolicy::Minimum</enum>
+       </widget>
+      </item>
+      <item row="9" column="0">
+       <widget class="Line" name="line">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>20</height>
-         </size>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QRadioButton" name="ignore_history_false">
+        <property name="text">
+         <string>No</string>
         </property>
-       </spacer>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="ignore_history_true">
+        <property name="text">
+         <string>Yes</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Ignore History?</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
@@ -316,5 +341,38 @@
   <tabstop>plot_button</tabstop>
  </tabstops>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>ignore_history_false</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sample_size_box</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>483</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>180</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ignore_history_false</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sample_button</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>483</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>483</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

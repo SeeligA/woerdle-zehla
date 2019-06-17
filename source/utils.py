@@ -33,7 +33,7 @@ def match_target_mt(df):
 
     # Note for testing: Include assert statement to make sure that lists are aligned (e.g. count/sum over seg_id)
     is_target = df['stype'] == 'target'
-    is_mt = df['stype'] == 'MT'
+    is_mt = (df['stype'] == 'MT') & (df['text'] != '')
 
     mt_list = list(df[is_mt]['text'].values)
     target_list = []
