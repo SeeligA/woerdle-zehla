@@ -2,7 +2,7 @@ import sys
 
 import pandas as pd
 from PyQt5 import uic
-from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow
+from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from PyQt5.QtGui import QIcon
 
@@ -12,7 +12,7 @@ from matplotlib.figure import Figure
 
 import numpy as np
 from source.parsing import read_from_file
-from source.utils import new_sample, new_translation, match_target_mt
+from source.utils import new_sample, new_translation, match_target_mt, save_cache
 from source.calculation import pe_density
 import textwrap
 import os.path
@@ -62,26 +62,35 @@ class MyWindow(QMainWindow):
             target_list, mt_list = new_translation(w.df, w.cache, w.sample_object, w.source)
 
         w.cache = pe_density(target_list, mt_list, w.cache)
+        w.actionSave_as.setEnabled(True)
         w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
-        w.statistics(target_list, mt_list, verbose=True)
+        w.statistics(verbose=True)
 
-    def print_details(self, apples_or_peaches, target_list, mt_list):
+    def print_details(self, apples_or_peaches):
         """Helper function for printing PED details"""
         wrapper = textwrap.TextWrapper(subsequent_indent=' '*20)
         count = 0
-        for i, j in apples_or_peaches.items():
+        for value in apples_or_peaches.values():
 
-            string1 = mt_list[i]
-            string2 = target_list[i]
+            w.textOutput.append('PED = {:.3f}'.format(value[0]))
+            w.textOutput.append('MT Output  : ' + str(wrapper.fill(text=value[1])))
+            w.textOutput.append('Target Übs : ' + str(wrapper.fill(text=value[2])) + '\n')
 
-            w.textOutput.append('PED = {:.3f}'.format(j))
-            w.textOutput.append('MT Output  : '+ str(wrapper.fill(text=string1)))
-            w.textOutput.append('Target Übs : '+ str(wrapper.fill(text=string2)) + '\n')
             count += 1
             if count == 10:
                 break
 
-    def statistics(self, target_list, mt_list, ba_limit=0.4, pp_limit=0.05, verbose=False):
+    def save_as(self):
+
+        fp = QFileDialog.getSaveFileName(filter='JSON-Datei (*.json)', directory='ped{:.3f}_{}-{}'.
+                                         format(w.cache['ped'], w.cache['Relation'], w.cache['Project']))[0]
+        try:
+            save_cache(fp, w.cache)
+
+        except OSError:
+            QMessageBox.warning(w, "Warning", "Not a valid path!")
+
+    def statistics(self, ba_limit=0.4, pp_limit=0.05, verbose=False):
         """Run additional statistics on Levenshtein distance results
 
         Arguments:
@@ -97,22 +106,22 @@ class MyWindow(QMainWindow):
             None
         """
 
-        bad_apples = {k: v for k, v in w.cache['ped_details'].items() if v >= ba_limit}
-        peach_perfect = {k: v for k, v in w.cache['ped_details'].items() if v <= pp_limit}
+        bad_apples = {k: v for k, v in w.cache['ped_details'].items() if v[0] >= ba_limit}
+        peach_perfect = {k: v for k, v in w.cache['ped_details'].items() if v[0] <= pp_limit}
 
         if verbose:
 
             if len(bad_apples) > 0:
 
                 w.textOutput.append(str('---Zu den Bad Apples (PED >= {}) gehören folgende Strings---\n'.format(ba_limit)))
-                w.print_details(bad_apples, target_list, mt_list)
+                w.print_details(bad_apples)
 
             else:
                 w.textOutput.append(str('---Super! Es gibt keine Bad Apples (PED <= {})\n'.format(ba_limit)))
 
             if len(peach_perfect) > 0:
                 w.textOutput.append(str('---Zu den Peach Perfects (PED <= {}) gehören folgende Strings---\n'.format(pp_limit)))
-                w.print_details(peach_perfect, target_list, mt_list)
+                w.print_details(peach_perfect)
 
             else:
                 w.textOutput.append(str('---Es gibt leider keine Peach Perfects (PED <= {})\n'.format(pp_limit)))
@@ -134,12 +143,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.addToolBar(NavigationToolbar(static_canvas, self))
 
         self._static_ax = static_canvas.figure.subplots()
-        df = pd.DataFrame.from_dict(data=w.cache['ped_details'], orient='index', columns=['ped'])
+        df = pd.DataFrame.from_dict(data={k: v[0] for k, v in w.cache['ped_details'].items()},
+                                    orient='index', columns=['ped'])
         bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
         xlabel = str('Post-edit density (Agg. score: {:.3f})'.format(w.cache['ped']))
         ylabel = str('Number of segments ({} seg. total)'.format(len(w.cache['ped_details'])))
 
-        self._static_ax.hist(data=df, x = df['ped'], bins=bin_edges);
+        self._static_ax.hist(data=df, x=df['ped'], bins=bin_edges);
         self._static_ax.set_xlabel(xlabel)
         self._static_ax.set_ylabel(ylabel)
 
@@ -154,6 +164,6 @@ if __name__ == '__main__':
     w.browse_button.clicked.connect(MyWindow.browse_file)
     w.actionOpen_File.triggered.connect(MyWindow.browse_file)
     w.actionExit.triggered.connect(qApp.quit)
-
+    w.actionSave_as.triggered.connect(MyWindow.save_as)
 
     sys.exit(app.exec_())

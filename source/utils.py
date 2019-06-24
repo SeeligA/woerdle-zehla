@@ -1,3 +1,5 @@
+import json
+
 from source.api import call_api, collect_trans_parameters
 from source.sampling import append_sample_translations, optimize_sample_object, prepare_sample_object
 
@@ -85,3 +87,9 @@ def new_translation(df, cache, sample_object, source):
     target_list, mt_list = match_target_mt(df)
 
     return target_list, mt_list
+
+
+def save_cache(fp, cache):
+    """Store cache for reference purposes."""
+    with open(fp, 'w', encoding='utf-8') as f:
+        json.dump(cache, f, ensure_ascii=False)

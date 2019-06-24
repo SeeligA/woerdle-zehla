@@ -58,7 +58,7 @@ def pe_density(s1, s2, cache):
         char_count += max_char
         lev_count += lev
 
-        ped_details[i] = lev / max_char
+        ped_details[i] = (lev / max_char, s1[i], s2[i])
 
     ped = lev_count / char_count
     cache['ped'] = ped
