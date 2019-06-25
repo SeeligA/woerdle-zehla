@@ -1,7 +1,8 @@
 import sys
+from distutils import util
 
 import pandas as pd
-from PyQt5 import uic
+from PyQt5 import QtCore, uic
 from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow, QMessageBox
 
 from PyQt5.QtGui import QIcon
@@ -14,6 +15,7 @@ import numpy as np
 from source.parsing import read_from_file
 from source.utils import new_sample, new_translation, match_target_mt, save_cache
 from source.calculation import pe_density
+from source.settings import SettingsWindow
 import textwrap
 import os.path
 
@@ -23,6 +25,10 @@ class MyWindow(QMainWindow):
     def __init__(self):
         super(MyWindow, self).__init__()
         self.initUI()
+        # Load settings
+        self.settings = QtCore.QSettings("Lev Corp.", "woerdle-zehla")
+
+
 
     def initUI(self):
         uic.loadUi(os.path.join('GUI', 'MTChallenge.ui'), self)
@@ -38,6 +44,10 @@ class MyWindow(QMainWindow):
         """Open file dialog and write name to line edit"""
         text = QFileDialog.getOpenFileName(filter='HTML-Datei (*.htm *.html) ;; SDLXLIFF-Datei (*.sdlxliff)')[0]
         w.input_file_line_edit.setText(text)
+
+    def open_settings(self):
+
+        w.s_dialog = SettingsWindow(w)
 
     @staticmethod
     def plot_results():
@@ -63,8 +73,14 @@ class MyWindow(QMainWindow):
 
         w.cache = pe_density(target_list, mt_list, w.cache)
         w.actionSave_as.setEnabled(True)
-        w.textOutput.append(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
+        w.textOutput.setText(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
         w.statistics(verbose=True)
+
+        w.autosave()
+
+    def autosave(self):
+        if util.strtobool(w.settings.value("autosave", "")):
+            w.save_as(auto=True)
 
     def print_details(self, apples_or_peaches):
         """Helper function for printing PED details"""
@@ -80,15 +96,20 @@ class MyWindow(QMainWindow):
             if count == 10:
                 break
 
-    def save_as(self):
+    def save_as(self, auto=False):
 
-        fp = QFileDialog.getSaveFileName(filter='JSON-Datei (*.json)', directory='ped{:.3f}_{}-{}'.
-                                         format(w.cache['ped'], w.cache['Relation'], w.cache['Project']))[0]
+        file_format = 'ped{:.3f}_{}-{}.json'.format(w.cache['ped'], w.cache['Relation'], w.cache['Project'])
+
+        if auto:
+            fp = os.path.join(w.settings.value("autosave_folder", ""), file_format)
+        else:
+            fp = QFileDialog.getSaveFileName(filter='JSON-Datei (*.json)', directory=file_format)[0]
+
         try:
             save_cache(fp, w.cache)
 
         except OSError:
-            QMessageBox.warning(w, "Warning", "Not a valid path!")
+            QMessageBox.warning(w, "Warning", "Not a valid path for saving!")
 
     def statistics(self, ba_limit=0.4, pp_limit=0.05, verbose=False):
         """Run additional statistics on Levenshtein distance results
@@ -165,5 +186,6 @@ if __name__ == '__main__':
     w.actionOpen_File.triggered.connect(MyWindow.browse_file)
     w.actionExit.triggered.connect(qApp.quit)
     w.actionSave_as.triggered.connect(MyWindow.save_as)
+    w.actionSettings.triggered.connect(MyWindow.open_settings)
 
     sys.exit(app.exec_())

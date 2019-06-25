@@ -91,5 +91,6 @@ def new_translation(df, cache, sample_object, source):
 
 def save_cache(fp, cache):
     """Store cache for reference purposes."""
+    print(fp)
     with open(fp, 'w', encoding='utf-8') as f:
         json.dump(cache, f, ensure_ascii=False)

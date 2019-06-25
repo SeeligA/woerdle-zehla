@@ -36,6 +36,12 @@ def collect_metadata_xml(filepath):
     return cache
 
 
+def clean_data(meta_list):
+    """Clean meta data from any invalid file path characters."""
+    p = re.compile('[<>;,?"*|/]')
+    return [p.sub('_', string) for string in meta_list]
+
+
 def collect_metadata_html(soup):
     """Read header of the bilingual table and parses pertinent project information
 
@@ -49,6 +55,8 @@ def collect_metadata_html(soup):
     trs = soup.find_all('tr')
     tds_m = trs[0].find_all('td')
     meta = tds_m[1].find_all(string=True) + tds_m[3].find_all(string=True)
+
+    meta = clean_data(meta)
 
     # Parse string data from column headers
     cache = dict()

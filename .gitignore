@@ -1,3 +1,23 @@
+# Distribution / packaging
+.Python
+env/
+build/
+data/config.ini
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+*.egg-info/
+.installed.cfg
+*.egg
+*.log
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -9,17 +29,18 @@ __pycache__/
 *.manifest
 *.spec
 
+# PyCharm
+*.idea/
 
-
-gui.exe
-Icon.ico
-.idea
-
-entry.csv
-build/
-dist/
+# IPython Notebook
+.ipynb_checkpoints
+*.ipynb
 
 # sensitive
 data/
 issues/
 out/
+
+gui.exe
+Icon.ico
+test/
