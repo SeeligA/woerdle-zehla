@@ -4,6 +4,10 @@ import os.path
 import requests
 
 
+class Error414(Exception):
+    pass
+
+
 def call_api(parameters, method='post'):
     """
     Call API and store response in translation variable
@@ -18,7 +22,7 @@ def call_api(parameters, method='post'):
     Returns:
         target -- list of strings from translation output
     """
-
+    translation = None
     # POST request, preferred method
     if method == 'post':
         translation = post_translation(parameters)
@@ -26,18 +30,8 @@ def call_api(parameters, method='post'):
     elif method == 'get':
         translation = get_translation(parameters)
 
-    # Output successful response or notify user that the request has failed
-    target = []
-
-    if translation is not None:
-        # Parse output from json response: target values are stored under the 'text' key
-        for i in range(len(translation['translations'])):
-            target.append(translation['translations'][i]['text'])
-
-    else:
-        target[0] = '[!] Request Failed!'
-
-    return target
+    # Parse output from json response: target values are stored under the 'text' key
+    return [translation['translations'][i]['text'] for i in range(len(translation['translations']))]
 
 
 def collect_trans_parameters(source,
@@ -97,11 +91,18 @@ def get_translation(parameters):
     params = parameters
 
     response = requests.get(url, params=params)
+    status_code = response.status_code
 
-    if response.status_code == 200:
+    if status_code == 200:
         return json.loads(response.content.decode('utf-8'))
+
+    elif status_code == 414:
+        print('Uri too long')
+        raise Error414
+
     else:
-        return None
+        print(status_code)
+        raise Exception
 
 
 def post_translation(parameters):
@@ -113,14 +114,21 @@ def post_translation(parameters):
 
     Returns:
         API response in nested dict format with detected source language and translation as text.
-        Error code in case the request failed
     """
 
     url = 'https://api.deepl.com/v2/translate'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
     response = requests.post(url, params=parameters, headers=headers)
-    if response.status_code == 200:
+    status_code = response.status_code
+    if status_code == 200:
         return json.loads(response.content.decode('utf-8'))
+
+    elif status_code == 414:
+        print('Uri too long')
+        raise Error414
+
     else:
-        return None
+        print(status_code)
+        raise Exception
+

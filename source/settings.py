@@ -9,7 +9,7 @@ import os
 class SettingsWindow(QtWidgets.QDialog):
     def __init__(self, parent):
         super().__init__(parent)
-        self.initUI()
+        self.init_ui()
         self.settings = QtCore.QSettings("Lev Corp.", "woerdle-zehla")
 
         autosave = util.strtobool(self.settings.value("autosave", ""))
@@ -18,7 +18,7 @@ class SettingsWindow(QtWidgets.QDialog):
         save_folder = self.settings.value("autosave_folder", "")
         self.auto_save_line.setText(save_folder)
 
-    def initUI(self):
+    def init_ui(self):
         uic.loadUi(os.path.join('GUI', 'settings.ui'), self)
         self.setWindowTitle('Wördlezehla')
         self.setWindowIcon(QIcon(os.path.join('GUI', 'Icon.png')))

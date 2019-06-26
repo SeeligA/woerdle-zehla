@@ -2,6 +2,7 @@ import json
 
 from source.api import call_api, collect_trans_parameters
 from source.sampling import append_sample_translations, optimize_sample_object, prepare_sample_object
+from source.api import Error414
 
 
 def cleanup_strings(string_list):
@@ -65,21 +66,34 @@ def new_translation(df, cache, sample_object, source):
     """
     # Setting text parameter limit according to DeepL API recommendations
     # This is to prevent URI too long (414) errors
+
     limit = 50
     base = limit
     target_mt = list()
-    # Check if list exceeds limit:
-    while len(source) - base > 0:
-        # Create slices from list with source segments
-        batch = source[base-limit:base]
-        # Generate parameters dictionary from batch data
-        parameters = collect_trans_parameters(source=batch, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
-        target_mt += call_api(parameters)
-        base += limit
 
-    batch = source[base-limit:len(source)]
-    parameters = collect_trans_parameters(source=batch, target_lang=cache['t_lid'], source_lang=cache['s_lid'])
-    target_mt += call_api(parameters)
+    while limit >= 10:
+        try:
+            if max(len(source), limit) - base <= 0:
+                batch = source[base-limit:len(source)]
+                parameters = collect_trans_parameters(source=batch,
+                                                      target_lang=cache['t_lid'],
+                                                      source_lang=cache['s_lid'])
+                target_mt += call_api(parameters)
+                break
+
+            else:
+                batch = source[base-limit:base]
+                parameters = collect_trans_parameters(source=batch,
+                                                      target_lang=cache['t_lid'],
+                                                      source_lang=cache['s_lid'])
+                target_mt += call_api(parameters)
+                base += limit
+
+        except Error414:
+            # If URI is too long, reset variables and send requests for smaller batches
+            limit -= 10
+            base = limit
+            target_mt = list()
 
     # Update DataFrame with translations as new rows
     df = append_sample_translations(df, sample_object, target_mt)

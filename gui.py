@@ -24,13 +24,11 @@ class MyWindow(QMainWindow):
 
     def __init__(self):
         super(MyWindow, self).__init__()
-        self.initUI()
+        self.init_ui()
         # Load settings
         self.settings = QtCore.QSettings("Lev Corp.", "woerdle-zehla")
 
-
-
-    def initUI(self):
+    def init_ui(self):
         uic.loadUi(os.path.join('GUI', 'MTChallenge.ui'), self)
         self.setWindowTitle('Wördlezehla')
         self.setWindowIcon(QIcon(os.path.join('GUI', 'Icon.png')))
@@ -46,7 +44,6 @@ class MyWindow(QMainWindow):
         w.input_file_line_edit.setText(text)
 
     def open_settings(self):
-
         w.s_dialog = SettingsWindow(w)
 
     @staticmethod
@@ -98,7 +95,7 @@ class MyWindow(QMainWindow):
 
     def save_as(self, auto=False):
 
-        file_format = 'ped{:.3f}_{}-{}.json'.format(w.cache['ped'], w.cache['Relation'], w.cache['Project'])
+        file_format = 'ped{:.3f}_{}___{}.json'.format(w.cache['ped'], w.cache['Relation'], w.cache['Project'])
 
         if auto:
             fp = os.path.join(w.settings.value("autosave_folder", ""), file_format)
@@ -133,7 +130,6 @@ class MyWindow(QMainWindow):
         if verbose:
 
             if len(bad_apples) > 0:
-
                 w.textOutput.append(str('---Zu den Bad Apples (PED >= {}) gehören folgende Strings---\n'.format(ba_limit)))
                 w.print_details(bad_apples)
 
