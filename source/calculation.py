@@ -30,11 +30,12 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-def pe_density(s1, s2, cache):
+def pe_density(source_list, s1, s2, cache):
     """Calculate post edit density for two lists of strings
 
     Arguments:
         s1, s2 as ordered lists with strings
+
 
     Returns:
         cache -- tuple containing Post-Edit density results on document level (as int()) and string level (as dict())
@@ -58,7 +59,7 @@ def pe_density(s1, s2, cache):
         char_count += max_char
         lev_count += lev
 
-        ped_details[i] = (lev / max_char, s1[i], s2[i])
+        ped_details[i] = (lev / max_char, source_list[i], s1[i], s2[i])
 
     ped = lev_count / char_count
     cache['ped'] = ped

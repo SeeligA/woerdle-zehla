@@ -1,7 +1,21 @@
 import re
 
+# Set maximum number of iterations to create a sample object
+MAX_SAMPLING = 7
 
-def prepare_sample_object(df, sample_size=15):
+
+def new_sample(df, sample_size):
+    """Create sample object.
+    Arguments:
+        df -- Source object DataFrame with columns 'seg_id', 'text', 'stype', 'status'
+        sample_size -- int() specifying the number of segments in a sample
+    """
+    filtered_items = prepare_sample_object(df)
+
+    return optimize_sample_object(filtered_items, sample_size)
+
+
+def prepare_sample_object(df):
     """
     Filter project data for valid segments
 
@@ -32,15 +46,12 @@ def prepare_sample_object(df, sample_size=15):
     filtered_items = my_filter.drop_duplicates('text')
     # Adapt sample size, use the lesser of all the sample segments available
     # or a multiple of the sample_size
-    if 0 < filtered_items.shape[0]:
-        # TODO: Review this bit
-        sample_size = min(filtered_items.shape[0], sample_size * 5)
-
+    if filtered_items.shape[0] != 0:
         return filtered_items
 
     else:
         print('Not enough items for sampling!')
-        return None  # TODO: Check if raising an exception would be more appropriate
+        raise Exception
 
 
 def optimize_sample_object(filtered_items, sample_size):
@@ -52,45 +63,42 @@ def optimize_sample_object(filtered_items, sample_size):
                           a) non-source,
                           b) non-translated
                           c) repeated segments
-        sample_size -- integer used to define maximum of items in sample object
+        sample_size -- int() specifying the number of segments in a sample
 
-    With this functions we avoid sampling non-translatable text which would skew the final result.
+    With this function we avoid sampling non-translatable text which would skew the final result.
 
     Returns:
-        sample_object -- DataFrame object containing
-        source -- list of source strings used for translation
+        sample_object -- DataFrame object containing seg_id, text, stype and status information
         max_alpha -- no. letters in proportion to the full string
     """
     # Create object for storing sample objects, source texts and ratios
     sample_objects_dict = {}
-    source_dict = {}
     alpha_share = []
     sample_size = min(filtered_items.shape[0], sample_size)
     # Set count and specify no. of iterations
     count = 0
-    while count < 7:
+    while count < MAX_SAMPLING:
 
+        # Create dataframe sample from valid segments
         sample_object = filtered_items.sample(sample_size)
-        # Write items in sample object to list
-        source = sample_object['text'].tolist()
-
+        # Store sample in dict for later reuse
         sample_objects_dict[count] = sample_object
-        source_dict[count] = source
 
         length = 0
         alpha = 0
-
-        for i in range(len(source)):
-            length += len(source[i])
-            alpha += len(re.findall('[^\W\d]', source[i]))
+        # Find translatable characters in sample object
+        for i in range(len(sample_object)):
+            length += len(sample_object['text'][i])
+            alpha += len(re.findall('[^\W\d]', sample_object['text'][i]))
 
         alpha_share.append(alpha / length)
         count += 1
 
     max_alpha = max(alpha_share)
+    # Pick sample with maximum number of translatable characters from dict
     sample_object = sample_objects_dict[alpha_share.index(max_alpha)]
-    source = source_dict[alpha_share.index(max_alpha)]
-    return sample_object, source, max_alpha
+
+    return sample_object, max_alpha
 
 
 def append_sample_translations(df, sample_object, translations):
@@ -107,7 +115,7 @@ def append_sample_translations(df, sample_object, translations):
     Returns:
         df -- Source object with translated strings being added at the end and marked as 'MT'
     """
-    # TODO: Check if another status marker might be more appropriate than 'MT'
+
     for i in range(sample_object.shape[0]):
         sample_object['text'].values[i] = translations[i]
         sample_object['stype'].values[i] = 'MT'

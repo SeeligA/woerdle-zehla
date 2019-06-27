@@ -1,14 +1,22 @@
 import json
 
-from source.api import call_api, collect_trans_parameters
-from source.sampling import append_sample_translations, optimize_sample_object, prepare_sample_object
 from source.api import Error414
+from source.api import call_api, collect_trans_parameters
+from source.sampling import append_sample_translations
+
+# Set the size of your request batches.
+# Reduce if your average segment size is larger; increase if segments are smaller in size.
+# TODO: Check how multi-byte characters affects request sizes
+MAX_REQUEST_SIZE = 50
+# Set the increment at which request sizes are automatically reduced if deemed too long by the API.
+# Smaller increments can mean more (unsuccessful) requests until a valid size has been reached.
+# Larger increments can mean more requests due to smaller batch sizes.
+REDUCE_REQUEST_SIZE_STEP = 10
 
 
 def cleanup_strings(string_list):
     """Remove additional whitespace"""
-    clean = [w.replace('\n', '') for w in string_list]
-    return clean
+    return [w.replace('\n', '') for w in string_list]
 
 
 def img_alt(tag):
@@ -16,41 +24,33 @@ def img_alt(tag):
     return tag.has_attr('alt') and tag.parent.name == 'td'
 
 
-def new_sample(df, sample_size=50):
-    # Create sample object
-    filtered_items = prepare_sample_object(df, sample_size)
-    sample_object, source, alpha_share = optimize_sample_object(filtered_items, sample_size)
-
-    return sample_object, source, alpha_share
-
-
 def match_target_mt(df):
-    """Lookup target strings and corresponding MT strings and write to 2 separate lists
+    """Lookup target strings and corresponding MT strings and write to 3 separate lists
 
     Arguments:
         df -- DataFrame from input module, referencing seg_id, text, and type
 
     Returns:
-        target_list, mt_list -- two aligned lists containing target strings and mt strings
+        source_list, target_list, mt_list -- aligned lists of strings sharing index numbers
     """
 
-    # Note for testing: Include assert statement to make sure that lists are aligned (e.g. count/sum over seg_id)
+    # Create boolean filters from segment type data
     is_target = df['stype'] == 'target'
+    is_source = df['stype'] == 'source'
     is_mt = (df['stype'] == 'MT') & (df['text'] != '')
 
-    mt_list = list(df[is_mt]['text'].values)
-    target_list = []
+    # Apply filter to create index for valid MT segments
     idx = df[is_mt].index
 
-    # loop over MT strings, find first instance and check for corresponding seg_ids in target strings.
-    # TODO: Check alternative approach with df.query, which includes index in function namespace
-    for i in range(len(idx)):
-        target_list.append(df[is_target].loc[idx[i]]['text'])
+    # Select text items matching MT index
+    source_list = df[is_source].ix[idx, 'text']
+    target_list = df[is_target].ix[idx, 'text']
+    mt_list = df[is_mt]['text']
 
-    return target_list, mt_list
+    return source_list, target_list, mt_list
 
 
-def new_translation(df, cache, sample_object, source):
+def new_translation(df, cache, sample_object):
     """
     Helper function managing API calls to generate MT output from source strings
 
@@ -61,50 +61,52 @@ def new_translation(df, cache, sample_object, source):
         source -- List of strings selected for translations
 
     Return:
+         source_list -- List of source strings
          target_list -- List of target strings
          mt_list -- List of MT output strings
     """
     # Setting text parameter limit according to DeepL API recommendations
     # This is to prevent URI too long (414) errors
 
-    limit = 50
+    source = sample_object['text']
+    limit = MAX_REQUEST_SIZE
     base = limit
     target_mt = list()
+    t_lid, s_lid = cache['t_lid'], cache['s_lid']
 
-    while limit >= 10:
+    while limit >= REDUCE_REQUEST_SIZE_STEP:
         try:
             if max(len(source), limit) - base <= 0:
                 batch = source[base-limit:len(source)]
-                parameters = collect_trans_parameters(source=batch,
-                                                      target_lang=cache['t_lid'],
-                                                      source_lang=cache['s_lid'])
+                parameters = collect_trans_parameters(source=batch, target_lang=t_lid, source_lang=s_lid)
                 target_mt += call_api(parameters)
                 break
 
             else:
                 batch = source[base-limit:base]
-                parameters = collect_trans_parameters(source=batch,
-                                                      target_lang=cache['t_lid'],
-                                                      source_lang=cache['s_lid'])
+                parameters = collect_trans_parameters(source=batch, target_lang=t_lid, source_lang=s_lid)
                 target_mt += call_api(parameters)
                 base += limit
 
         except Error414:
             # If URI is too long, reset variables and send requests for smaller batches
-            limit -= 10
+            limit -= REDUCE_REQUEST_SIZE_STEP
             base = limit
             target_mt = list()
 
     # Update DataFrame with translations as new rows
     df = append_sample_translations(df, sample_object, target_mt)
-    # Matching target strings and MT strings based on index numbers
-    target_list, mt_list = match_target_mt(df)
 
-    return target_list, mt_list
+    return df
 
 
 def save_cache(fp, cache):
     """Store cache for reference purposes."""
-    print(fp)
     with open(fp, 'w', encoding='utf-8') as f:
         json.dump(cache, f, ensure_ascii=False)
+
+
+def range_positive(start, stop, step):
+    while start < stop:
+        yield start
+        start += step
