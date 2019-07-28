@@ -6,7 +6,7 @@ from source.sampling import append_sample_translations
 
 # Set the size of your request batches.
 # Reduce if your average segment size is larger; increase if segments are smaller in size.
-# TODO: Check how multi-byte characters affects request sizes
+# TODO: Check how multi-byte characters affect request sizes
 MAX_REQUEST_SIZE = 50
 # Set the increment at which request sizes are automatically reduced if deemed too long by the API.
 # Smaller increments can mean more (unsuccessful) requests until a valid size has been reached.

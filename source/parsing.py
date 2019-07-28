@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict
 import itertools
+import logging
 
 import pandas as pd
 import numpy as np
@@ -19,14 +20,15 @@ def collect_metadata_xml(filepath):
         cache -- Dictionary for further referencing and translation calls
     """
     cache = {}
-    # Extract Client name and id
-    regex = re.compile('((?<=ab Dez 2010\\\)[^\\\]+)')
+
+    # Extract Client name and id. The regex acounts for both Windows and Unix-style paths
+    regex = re.compile('((?<=ab Dez 2010(\\\|/))[^\\\/]+)')
     cache['Relation'] = regex.search(filepath)
     # Extract project and PO ids
-    regex = re.compile('((?<=03_Projekte\\\)[^\\\]+)')
+    regex = re.compile('((?<=03_Projekte(\\\|/))[^\\\/]+)')
     cache['Project'] = regex.search(filepath)
     # Extract document name
-    regex = re.compile('((?<=\\\)[^\\\]+$)')
+    regex = re.compile('((?<=(\\\|/))[^\\\|/]+$)')
     cache['Document'] = regex.search(filepath)
     # Iterate through search results and write values to cache
     for k, v in cache.items():
@@ -38,11 +40,58 @@ def collect_metadata_xml(filepath):
 
 def clean_data(meta_list):
     """Clean meta data from any invalid file path characters."""
-    p = re.compile('[<>;,?"*|/]')
+    p = re.compile('[<>;?"*|/]')
     return [p.sub('_', string) for string in meta_list]
 
 
 def collect_metadata_html(soup):
+    """Read header of the bilingual table and parses pertinent project information
+
+    Arguments:
+        Soup -- BeautifulSoupObject created from Across HTML export
+
+    Returns:
+        cache -- Dictionary for further referencing and translation calls
+    """
+    # Parse source and target column header
+
+    try:
+        tds_m = soup.find_all('div')
+
+        meta = tds_m[0].get_text().split("\n")
+        meta = clean_data(meta)
+
+        # Parse string data from column headers
+        p = re.compile(r'(^.+?) \((.+?)\)$')
+        result = p.match(meta[3])
+
+        cache = dict()
+        cache['Project'] = result[1]
+        cache['Relation'] = result[2].split(', ')[1]
+        cache['Document'] = soup.find('div', attrs={'class': 'docTitleDocumentName'}).get_text()
+
+        p = re.compile(r'(?:^.+?: )(.+?) \(.+?\) (?:nach|to) (.+?) \(.+?\)$')
+        result = p.match(meta[5])
+        s_lid = result[1]
+        t_lid = result[2]
+
+    # Handle exception for Across exports created pre v7.0
+    except IndexError:
+        cache, s_lid, t_lid = collect_metadata_html_v6_3(soup)
+
+    # Create lookup dictionary for languages with MT support
+    # TODO: Update dictionary where required
+    lid_trans = {'Deutsch': 'DE', 'Englisch': 'EN', 'Französisch': 'FR',
+                 'Italienisch': 'IT', 'Niederländisch': 'NL', 'Polnisch': 'PL',
+                 'Portugiesisch': 'PT', 'Russisch': 'RU', 'Spanisch': 'ES'}
+
+    cache['s_lid'] = lid_trans.get(s_lid, str("'{}' not supported".format(s_lid)))
+    cache['t_lid'] = lid_trans.get(t_lid, str("'{}' not supported".format(t_lid)))
+
+    return cache
+
+
+def collect_metadata_html_v6_3(soup):
     """Read header of the bilingual table and parses pertinent project information
 
     Arguments:
@@ -67,20 +116,10 @@ def collect_metadata_html(soup):
     s_lid = meta[0].split(sep=' ')[0]
     t_lid = meta[4].split(sep=' ')[0]
 
-    # Create lookup dictionary for languages with MT support
-    # TODO: Update dictionary where required
-    lid_trans = {'Deutsch': 'DE', 'Englisch': 'EN', 'Französisch': 'FR',
-                 'Italienisch': 'IT', 'Niederländisch': 'NL', 'Polnisch': 'PL',
-                 'Portugiesisch': 'PT', 'Russisch': 'RU', 'Spanisch': 'ES'}
-
-    # Translate string data to ISO-type Language IDs
-    cache['s_lid'] = lid_trans.get(s_lid, str("'{}' not supported".format(s_lid)))
-    cache['t_lid'] = lid_trans.get(t_lid, str("'{}' not supported".format(t_lid)))
-
-    return cache
+    return cache, s_lid, t_lid
 
 
-def parse_html_versions(soup):
+def parse_html_versions_v6_3(soup):
     """Parse first entry from version history as MT output
 
     Arguments:
@@ -102,8 +141,41 @@ def parse_html_versions(soup):
     return target_mt
 
 
+def parse_html_versions(soup):
+    """Parse first entry from version history as MT output
+
+    Arguments:
+        soup -- BeautifulSoup object generated from input
+
+    Returns:
+         target_mt -- List of strings from version history
+    """
+    target_mt = []
+
+    try:
+        for element in soup.find_all('td', attrs={'class': 'inactiveTarget'}):
+
+            box = element.find('div', attrs={'class': 'atomHistory-box'})
+
+            if box.span:
+                versions = box.span.text
+
+            # Add last version from table data and ignore any other versions
+            if len(versions) > 0:
+                target_mt.append(versions)
+            else:
+                target_mt.append('')
+
+    except AttributeError:
+        logging.info("Detected v6.3 HTML")
+        target_mt = parse_html_versions_v6_3(soup)
+
+    return target_mt
+
+
 def parse_html_strings(soup, text):
     # Create lists of strings for segment id and source
+
     seg_id = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveNumbering'})]
     text['source'] = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveSource'})]
 
@@ -112,13 +184,24 @@ def parse_html_strings(soup, text):
     # Remove version elements from soup
     [element.replace_with('') for element in soup.find_all('div', attrs={'class': 'atomHistory-box'})]
     # Create list of strings for target
-    text['target'] = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveTarget'})]
+    targets = list()
+    for element in soup.find_all('td', attrs={'class': 'inactiveTarget'}):
+        targets.append(element.find('pre', attrs={'class': 'atom'}).text)
+
+    text['target'] = targets
     # Function call to delete additional whitespace and ignore first row
     # TODO: Clean up lines with for loop
-    seg_id = cleanup_strings(seg_id[1:])
-    text['source'] = cleanup_strings(text['source'][1:])
-    # TODO: Implement to compare target with previous versions
-    text['target'] = cleanup_strings(text['target'][1:])
+    # Account for the fact that v7.0 segments start in the first table row
+    if seg_id[1] != "\xa0":
+        seg_id = cleanup_strings(seg_id)
+        text['source'] = cleanup_strings(text['source'])
+        text['target'] = cleanup_strings(text['target'])
+
+    else:
+        seg_id = cleanup_strings(seg_id[1:])
+        text['source'] = cleanup_strings(text['source'][1:])
+        text['target'] = cleanup_strings(text['target'][1:])
+
     return seg_id, text
 
 
@@ -146,7 +229,7 @@ def parse_xml_strings(soup, text):
             if parent.name == 'seg-source':
                 text['source'].append(''.join(i.strings))
 
-    segs = soup.find_all("sdl:seg")
+    segs = soup.find_all('sdl:seg')
     for seg in segs:
         seg_id.append(seg.attrs['id'])
         status_list.append(seg.attrs.get('conf', 'Unbearbeitet'))

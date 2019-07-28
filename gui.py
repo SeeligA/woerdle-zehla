@@ -8,7 +8,7 @@ from PyQt5.QtWidgets import qApp, QApplication, QFileDialog, QMainWindow, QMessa
 from PyQt5.QtGui import QIcon
 
 import pandas as pd
-# import numpy as np
+import numpy as np
 
 from matplotlib.backends.qt_compat import QtWidgets
 from matplotlib.backends.backend_qt5agg import (FigureCanvas, NavigationToolbar2QT as NavigationToolbar)
@@ -173,9 +173,9 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         df = pd.DataFrame.from_dict(data={k: v[0] for k, v in w.cache['ped_details'].items()},
                                     orient='index', columns=['ped'])
 
-        bin_edges = [x for x in range_positive(0, df['ped'].max() + 0.05, 0.05)]
+        #bin_edges = [x for x in range_positive(0, df['ped'].max() + 0.05, 0.05)]
         # Uncomment to use the numpy implementation instead
-        # bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
+        bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
         xlabel = str('Post-edit density (Agg. score: {:.3f})'.format(w.cache['ped']))
         ylabel = str('Number of segments ({} seg. total)'.format(len(w.cache['ped_details'])))
 
