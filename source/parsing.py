@@ -2,16 +2,19 @@ import re
 from collections import defaultdict
 import itertools
 import logging
+import os.path
 
 import pandas as pd
 import numpy as np
 from bs4 import BeautifulSoup
 
+from PyQt5.QtWidgets import QFileDialog
+
 from source.utils import cleanup_strings, img_alt
 
 
-def collect_metadata_xml(filepath):
-    """Collect metadata from filepath
+def collect_metadata_xml(fp):
+    """Collect metadata from file path.
 
     Arguments:
         filepath = String specifying the SDLXLIFF input file on F:
@@ -23,13 +26,13 @@ def collect_metadata_xml(filepath):
 
     # Extract Client name and id. The regex acounts for both Windows and Unix-style paths
     regex = re.compile('((?<=ab Dez 2010(\\\|/))[^\\\/]+)')
-    cache['Relation'] = regex.search(filepath)
+    cache['Relation'] = regex.search(fp)
     # Extract project and PO ids
     regex = re.compile('((?<=03_Projekte(\\\|/))[^\\\/]+)')
-    cache['Project'] = regex.search(filepath)
+    cache['Project'] = regex.search(fp)
     # Extract document name
     regex = re.compile('((?<=(\\\|/))[^\\\|/]+$)')
-    cache['Document'] = regex.search(filepath)
+    cache['Document'] = regex.search(fp)
     # Iterate through search results and write values to cache
     for k, v in cache.items():
         if v:
@@ -39,7 +42,15 @@ def collect_metadata_xml(filepath):
 
 
 def clean_data(meta_list):
-    """Clean meta data from any invalid file path characters."""
+    """
+    Remove invalid file path characters from meta data.
+    Arguments:
+        meta_list -- List of meta data strings
+        Comma was excluded from character list for parsing purposes
+
+    Returns:
+        List of clean meta data strings
+    """
     p = re.compile('[<>;?"*|/]')
     return [p.sub('_', string) for string in meta_list]
 
@@ -173,11 +184,12 @@ def parse_html_versions(soup):
     return target_mt
 
 
-def parse_html_strings(soup, text):
+def parse_html_strings(soup):
     # Create lists of strings for segment id and source
+    text_dict = defaultdict(list)
 
-    seg_id = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveNumbering'})]
-    text['source'] = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveSource'})]
+    seg_id_list = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveNumbering'})]
+    text_dict['source'] = [element.text for element in soup.find_all('td', attrs={'class': 'inactiveSource'})]
 
     # Create list of strings from previous version elements in target
     # TODO: Implement to compare target with previous versions
@@ -186,40 +198,43 @@ def parse_html_strings(soup, text):
     # Create list of strings for target
     targets = list()
     for element in soup.find_all('td', attrs={'class': 'inactiveTarget'}):
-        targets.append(element.find('pre', attrs={'class': 'atom'}).text)
 
-    text['target'] = targets
+        try:
+            targets.append(element.find('pre', attrs={'class': 'atom'}).text)
+        except AttributeError:
+            targets.append('')
+
+    text_dict['target'] = targets
     # Function call to delete additional whitespace and ignore first row
     # TODO: Clean up lines with for loop
     # Account for the fact that v7.0 segments start in the first table row
-    if seg_id[1] != "\xa0":
-        seg_id = cleanup_strings(seg_id)
-        text['source'] = cleanup_strings(text['source'])
-        text['target'] = cleanup_strings(text['target'])
+    if seg_id_list[1] != "\xa0":
+        seg_id_list = cleanup_strings(seg_id_list)
+        text_dict['source'] = cleanup_strings(text_dict['source'])
+        text_dict['target'] = cleanup_strings(text_dict['target'])
 
     else:
-        seg_id = cleanup_strings(seg_id[1:])
-        text['source'] = cleanup_strings(text['source'][1:])
-        text['target'] = cleanup_strings(text['target'][1:])
+        seg_id_list = cleanup_strings(seg_id_list[1:])
+        text_dict['source'] = cleanup_strings(text_dict['source'][1:])
+        text_dict['target'] = cleanup_strings(text_dict['target'][1:])
 
-    return seg_id, text
+    return seg_id_list, text_dict
 
 
-def parse_xml_strings(soup, text):
+def parse_xml_strings(soup, versions=False):
     """Read segment strings and segments status information.
 
     Arguments:
         soup -- BeautifulSoup object generated from input
 
     Returns:
-        seg_id -- List containing segment ids
-        source -- List containing source strings
-        target -- List containing target strings
+        seg_id_list -- List containing segment ids
+        text -- Dictionary containing two lists with source and target strings
         status_list -- List containing segment status information
     """
-    seg_id = []
-
-    status_list = []
+    seg_id_list = list()
+    text = defaultdict(list)
+    status_list = list()
     # Find mrk elements with mtype attribute value "seg"
     mrk = soup.find_all('mrk', attrs={'mtype': 'seg'})
     for i in mrk:
@@ -231,10 +246,14 @@ def parse_xml_strings(soup, text):
 
     segs = soup.find_all('sdl:seg')
     for seg in segs:
-        seg_id.append(seg.attrs['id'])
-        status_list.append(seg.attrs.get('conf', 'Unbearbeitet'))
+        seg_id_list.append(seg.attrs['id'])
 
-    return seg_id, text, status_list
+        if versions:
+            status_list.append(seg.attrs.get('origin', 'Unknown'))
+        else:
+            status_list.append(seg.attrs.get('conf', 'Unbearbeitet'))
+
+    return seg_id_list, text, status_list
 
 
 def collect_string_data(soup, filetype, mt_soup=None):
@@ -243,47 +262,84 @@ def collect_string_data(soup, filetype, mt_soup=None):
     Arguments:
         soup -- BeautifulSoupObject created from Across HTML export
         filetype -- String specifying supported file type. Takes either 'HTML' or "XML"
-
-    Function has been updated to account for XML-based SDLXLIFF files
+        mt_soup -- Optional soup object identical with the original soup for parsing an MT file
 
     Returns:
-        seg_id_se -- Series with segment id data
-        text_se -- Series with string data
-        stype_se -- Series referencing segment type (source, target, previous)
-        status_se -- Series object containing status info
+        df -- Cleaned DataFrame object containing Segment IDs as index, and strings, status infos and segment type info
+              as columns.
     """
-    text = defaultdict(list)
+    seg_id = defaultdict(list)
+    status = defaultdict(list)
 
     if filetype == 'HTML':
-        seg_id, text = parse_html_strings(soup, text)
+        seg_id['source'], text = parse_html_strings(soup)
         # function call to extract status data from third column
-        status_list = collect_status_data(soup)
+        status['source'] = collect_status_data(soup)
+
+        if mt_soup:
+
+            # Change status information for lookup purposes and write as new list to dict
+            status['MT'] = ['mt' if x == 'Bearbeitet (Maschinell übersetzt)'
+                                    or x == 'Bearbeitet (Maschinell übersetzt und manuell bearbeitet)'
+                                    or x == 'Korrigiert (Maschinell übersetzt)'
+                                    or x == 'Korrigiert (Maschinell übersetzt und manuell bearbeitet)'
+                            else x for x in status['source']]
+
+            seg_id['MT'] = seg_id['source']
+            # Add MT version strings to text dictionary
+            text['MT'] = parse_html_versions(mt_soup)
 
     elif filetype == 'XML':
-        seg_id, text, status_list = parse_xml_strings(soup, text)
+        # Parse segment information in file and add to dictionaries.
+        seg_id['source'], text, status['source'] = parse_xml_strings(soup)
 
-    else:
-        return None
+        if mt_soup:
+            # Now parse information in MT file.
+            # We add the "versions" flag, because this operations is identical to parsing the original file.
+            # The only difference is that we are only interested in the segments with origin "mt".
+            seg_id['MT'], mt_text, mt_origin_list = parse_xml_strings(mt_soup, versions=True)
+            status['MT'] = mt_origin_list
+            text['MT'] = mt_text['target']
 
-    if mt_soup:
-        # Add MT version strings to text dictionary
-        text['MT'] = parse_html_versions(mt_soup)
+    # Create target keys and populate with source values.
+    status['target'] = status['source']
+    seg_id['target'] = seg_id['source']
 
-    # Concatenate status
-    status_se = pd.Series(status_list * len(text))
-    status_se.name = 'status'
+    return create_dataframe(seg_id, text, status)
 
-    # Convert seg_id list to Series
-    seg_id_se = pd.Series(seg_id * len(text), name='seg_id')
 
-    # Convert text dictionary values to Series
+def create_dataframe(seg_id, text, status):
+    """
+    Create DataFrame object from dictionary with parsed strings.
+
+    Arguments:
+        seg_id -- Dictionary mapping segment IDs to segment types (source, target, MT [optional])
+        text -- Dictionary mapping text strings to segment types (source, target, MT [optional])
+        status -- Dictionary mapping status info to segment types (source, target, MT [optional])
+
+    Returns:
+        df -- Cleaned DataFrame object containing Segment IDs as index, and strings, status infos and segment type info
+              as columns.
+    """
+    # Convert dictionary values to Series'
+    seg_id_se = pd.Series(itertools.chain.from_iterable(seg_id.values()), name='seg_id')
     text_se = pd.Series(itertools.chain.from_iterable(text.values()), name='text')
+    status_se = pd.Series(itertools.chain.from_iterable(status.values()), name='status')
 
-    # Create segment type column from dictionary keys
-    stype = (np.repeat(k, len(v)) for k, v in text.items())
+    # Populate segment type Series from status keys
+    stype = (np.repeat(k, len(v)) for k, v in status.items())
     stype_se = pd.Series(itertools.chain.from_iterable(stype), name='stype')
 
-    return seg_id_se, text_se, stype_se, status_se
+    # Merge Series to DataFrame
+    df = pd.concat([text_se, stype_se, status_se], axis=1)
+    df.index = seg_id_se
+
+    # Filter for index items that contain only digits.
+    # This is to ignore split segment which use alphanumerics as IDs. (Studio XML only)
+    split_filter = df.index.str.isdigit()
+    df = df[split_filter]
+
+    return df
 
 
 def collect_status_data(soup):
@@ -320,7 +376,7 @@ def collect_status_data(soup):
 
 
 def read_filetype(file):
-    """Check for xml or html declaration"""
+    """Check for xml or html declaration."""
     first_line = file.readline()
     if re.match('\\ufeff<\?xml', first_line):
         return 'XML'
@@ -332,12 +388,14 @@ def read_filetype(file):
 
 
 def read_from_file(fp, encoding='utf-8', versions=False):
-    """Read file with translation unit data
+    """Read file with translation unit data.
 
     Arguments:
         fp -- path to file to be parsed. At the moment the parser accepts both sdlxliff and
               html files (with/without change history)
         encoding -- defaults to utf-8
+        versions -- Flag to control the source of the MT output.
+                    If True, MT strings will be parsed from the version history (HTML) or a separate file (XML).
     TODO: Check for other encodings,
           idea: Lookup charset from HTML Header / XML declaration and return in cache
     Returns:
@@ -367,17 +425,17 @@ def read_from_file(fp, encoding='utf-8', versions=False):
 
     # function call to extract string data from source and target columns
     if versions:
+        # Prompt for path to SDLXLIFF containing MT output
+        if filetype == 'XML':
+            fp = QFileDialog.getOpenFileName(caption="Select file with MT segments",
+                                             filter='SDLXLIFF-Datei ({})'.format(os.path.basename(fp)))[0]
+
         # Make new soup
         with open(fp, 'r', encoding=encoding) as f:
-            filetype = read_filetype(f)
             mt_soup = BeautifulSoup(f, 'lxml')
-        seg_id, text_se, stype_se, status_se = collect_string_data(soup, filetype, mt_soup=mt_soup)
+        df = collect_string_data(soup, filetype, mt_soup=mt_soup)
 
     else:
-        seg_id, text_se, stype_se, status_se = collect_string_data(soup, filetype)
-
-    # Merge Series to DataFrame
-    df = pd.concat([text_se, stype_se, status_se], axis=1)
-    df.index = seg_id
+        df = collect_string_data(soup, filetype)
 
     return df, cache

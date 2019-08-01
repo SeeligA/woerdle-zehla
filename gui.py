@@ -72,7 +72,14 @@ class MyWindow(QMainWindow):
         """
         
         if w.ignore_history_false.isChecked():
+
             w.df, w.cache = read_from_file(w.input_file_line_edit.text(), versions=True)
+            filter_index = w.df.query('status == "mt"').index
+            w.df = w.df.loc[filter_index]
+
+            # Create boolean filter with all repetitions except for first occurrences set to True
+            filter_index = w.df.query('stype == "source"').duplicated('text')
+            w.df = w.df[-filter_index]
 
         else:
             w.df = new_translation(w.df, w.cache, w.sample_object)
@@ -97,8 +104,8 @@ class MyWindow(QMainWindow):
         for value in apples_or_peaches.values():
 
             w.textOutput.append('PED = {:.3f}'.format(value[0]))
-            w.textOutput.append('MT Output  : ' + str(wrapper.fill(text=value[2])))
-            w.textOutput.append('Target Übs : ' + str(wrapper.fill(text=value[3])) + '\n')
+            w.textOutput.append('MT Output  : ' + str(wrapper.fill(text=value[3])))
+            w.textOutput.append('Target Übs : ' + str(wrapper.fill(text=value[2])) + '\n')
 
             count += 1
             if count == 10:
@@ -173,8 +180,6 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         df = pd.DataFrame.from_dict(data={k: v[0] for k, v in w.cache['ped_details'].items()},
                                     orient='index', columns=['ped'])
 
-        #bin_edges = [x for x in range_positive(0, df['ped'].max() + 0.05, 0.05)]
-        # Uncomment to use the numpy implementation instead
         bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)
         xlabel = str('Post-edit density (Agg. score: {:.3f})'.format(w.cache['ped']))
         ylabel = str('Number of segments ({} seg. total)'.format(len(w.cache['ped_details'])))

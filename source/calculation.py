@@ -34,8 +34,9 @@ def pe_density(source_list, s1, s2, cache):
     """Calculate post edit density for two lists of strings
 
     Arguments:
+        source_list -- List of source strings used for logging purposes
         s1, s2 as ordered lists with strings
-
+        cache -- Dictionary containing project meta data
 
     Returns:
         cache -- tuple containing Post-Edit density results on document level (as int()) and string level (as dict())

@@ -35,6 +35,7 @@ def match_target_mt(df):
     """
 
     # Create boolean filters from segment type data
+
     is_target = df['stype'] == 'target'
     is_source = df['stype'] == 'source'
     is_mt = (df['stype'] == 'MT') & (df['text'] != '')

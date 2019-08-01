@@ -41,8 +41,8 @@ def collect_trans_parameters(source,
                              tag_handling=None,
                              non_splitting_tags=None,
                              ignore_tags=None,
-                             split_sentences='0',  # make sure to use dtype string. Else the for loop
-                             preserve_formatting=0  # will default split_sentence parameter to "1"
+                             split_sentences='0',   # make sure to use write as string. Else the for loop will
+                             preserve_formatting=0  # default split_sentence parameter to "1"
                              ):
     """
     Check for required and optional parameters and write to list
@@ -68,9 +68,15 @@ def collect_trans_parameters(source,
         auth_key = f.readline()
 
     # populate list with parameter values
-    parameters = {'auth_key': auth_key, 'text': source, 'target_lang': target_lang, 'source_lang': source_lang,
-                  'tag_handling': tag_handling, 'non_splitting_tags': non_splitting_tags, 'ignore_tags': ignore_tags,
-                  'split_sentences': split_sentences, 'preserve_formatting': preserve_formatting}
+    parameters = {'auth_key': auth_key,
+                  'text': source,
+                  'target_lang': target_lang,
+                  'source_lang': source_lang,
+                  'tag_handling': tag_handling,
+                  'non_splitting_tags': non_splitting_tags,
+                  'ignore_tags': ignore_tags,
+                  'split_sentences': split_sentences,
+                  'preserve_formatting': preserve_formatting}
 
     return parameters
 

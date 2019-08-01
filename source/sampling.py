@@ -38,8 +38,10 @@ def prepare_sample_object(df):
         status == "Translated" | \
         status == "Korrigiert" | \
         status == "Korrigiert (Maschinell übersetzt)" | \
+        status == "Korrigiert (Die Aufgabe ist Ihnen nicht zugewiesen.)" | \
         status == "Übersetzt" | \
         status == "Übersetzt (Aus zweisprachigem Dokument eingefügt)" | \
+        status == "Übersetzt (Die Aufgabe ist Ihnen nicht zugewiesen.)" | \
         status == "Bearbeitet (Aus zweisprachigem Dokument eingefügt)")')
 
     # Eliminate repetitions
