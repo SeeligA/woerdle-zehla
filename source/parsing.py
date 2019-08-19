@@ -279,15 +279,17 @@ def collect_string_data(soup, filetype, mt_soup=None):
         if mt_soup:
 
             # Change status information for lookup purposes and write as new list to dict
-            status['MT'] = ['mt' if x == 'Bearbeitet (Maschinell übersetzt)'
-                                    or x == 'Bearbeitet (Maschinell übersetzt und manuell bearbeitet)'
-                                    or x == 'Korrigiert (Maschinell übersetzt)'
-                                    or x == 'Korrigiert (Maschinell übersetzt und manuell bearbeitet)'
+            status['mt'] = ['mt' if x == 'Bearbeitet (Maschinell übersetzt)'
+                            or x == 'Bearbeitet (Maschinell übersetzt und manuell bearbeitet)'
+                            or x == 'Korrigiert (Maschinell übersetzt)'
+                            or x == 'Korrigiert (Maschinell übersetzt und manuell bearbeitet)'
+                            or x == 'Übersetzt (Maschinell übersetzt)'
+                            or x == 'Übersetzt (Maschinell übersetzt und manuell bearbeitet)'
                             else x for x in status['source']]
 
-            seg_id['MT'] = seg_id['source']
+            seg_id['mt'] = seg_id['source']
             # Add MT version strings to text dictionary
-            text['MT'] = parse_html_versions(mt_soup)
+            text['mt'] = parse_html_versions(mt_soup)
 
     elif filetype == 'XML':
         # Parse segment information in file and add to dictionaries.
@@ -297,9 +299,9 @@ def collect_string_data(soup, filetype, mt_soup=None):
             # Now parse information in MT file.
             # We add the "versions" flag, because this operations is identical to parsing the original file.
             # The only difference is that we are only interested in the segments with origin "mt".
-            seg_id['MT'], mt_text, mt_origin_list = parse_xml_strings(mt_soup, versions=True)
-            status['MT'] = mt_origin_list
-            text['MT'] = mt_text['target']
+            seg_id['mt'], mt_text, mt_origin_list = parse_xml_strings(mt_soup, versions=True)
+            status['mt'] = mt_origin_list
+            text['mt'] = mt_text['target']
 
     # Create target keys and populate with source values.
     status['target'] = status['source']

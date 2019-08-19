@@ -1,4 +1,5 @@
 import json
+import pandas as pd
 
 from source.api import Error414
 from source.api import call_api, collect_trans_parameters
@@ -25,30 +26,28 @@ def img_alt(tag):
 
 
 def match_target_mt(df):
-    """Lookup target strings and corresponding MT strings and write to 3 separate lists
+    """Create new table with corresponding source, target and MT data in separate columns
 
     Arguments:
         df -- DataFrame from input module, referencing seg_id, text, and type
 
     Returns:
-        source_list, target_list, mt_list -- aligned lists of strings sharing index numbers
+        df_mt -- Dataframe with source, target and MT data aligned on index numbers
     """
 
     # Create boolean filters from segment type data
+    target_idx = df[df['stype'] == 'target'].index
+    mt_idx = df[(df['stype'] == 'mt') & (df['text'] != '')].index
+    # Create new index so that only index numbers are included
+    # that exist in both target_idx and mt_idx
+    intersect = mt_idx.intersection(target_idx)
+    df = df.loc[intersect, ['text', 'stype']]
 
-    is_target = df['stype'] == 'target'
-    is_source = df['stype'] == 'source'
-    is_mt = (df['stype'] == 'MT') & (df['text'] != '')
+    strings = {stype: df[df['stype'] == stype].loc[:, 'text'] for stype in ['source', 'target', 'mt']}
 
-    # Apply filter to create index for valid MT segments
-    idx = df[is_mt].index
+    df_mt = pd.DataFrame(strings)
 
-    # Select text items matching MT index
-    source_list = df[is_source].ix[idx, 'text']
-    target_list = df[is_target].ix[idx, 'text']
-    mt_list = df[is_mt]['text']
-
-    return source_list, target_list, mt_list
+    return df_mt
 
 
 def new_translation(df, cache, sample_object):
@@ -62,9 +61,7 @@ def new_translation(df, cache, sample_object):
         source -- List of strings selected for translations
 
     Return:
-         source_list -- List of source strings
-         target_list -- List of target strings
-         mt_list -- List of MT output strings
+        df --
     """
     # Setting text parameter limit according to DeepL API recommendations
     # This is to prevent URI too long (414) errors

@@ -120,7 +120,7 @@ def append_sample_translations(df, sample_object, translations):
 
     for i in range(sample_object.shape[0]):
         sample_object['text'].values[i] = translations[i]
-        sample_object['stype'].values[i] = 'MT'
+        sample_object['stype'].values[i] = 'mt'
     df = df.append(sample_object, ignore_index=False)
 
     return df

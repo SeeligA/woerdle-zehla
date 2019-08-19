@@ -1,3 +1,5 @@
+
+
 def levenshtein(s1, s2):
     """Calculate Levenshtein distance based on string1 and string2
 
@@ -30,39 +32,28 @@ def levenshtein(s1, s2):
     return previous_row[-1]
 
 
-def pe_density(source_list, s1, s2, cache):
-    """Calculate post edit density for two lists of strings
+def pe_density(df, cache):
+    """Calculate post edit density for MT strings.
 
     Arguments:
-        source_list -- List of source strings used for logging purposes
-        s1, s2 as ordered lists with strings
-        cache -- Dictionary containing project meta data
+        df -- DataFrame table containing string data in "source", "target" and "mt" columns
+
+        The function applies the Levenshtein algorithm to each row and stores the output and corresponding ped data in
+        three new columns. The aggregated score as well as string and individual score data is the added to the cache.
 
     Returns:
-        cache -- tuple containing Post-Edit density results on document level (as int()) and string level (as dict())
-                 updated cache with ped result
+        cache -- Updated dictionary containing ped score data
     """
 
-    lev_count = float()
-    char_count = int()
-    ped_details = {}
+    # Write the maximum length for each target-mt pair to a new column. We need this value to avoid dividing by zero.
+    df["max_char"] = df.apply(lambda x: max(len(x.target), len(x.mt)), axis=1)
+    # Calculate Levenshtein distance for each target-mt pair.
+    df["lev"] = df.apply(lambda x: levenshtein(x.target, x.mt), axis=1)
+    # Normalize Levenshtein distance by maximum segment length.
+    df['score'] = df['lev'].copy().div(df['max_char'])
 
-    # Run through lists and calculate Levenshtein distance and
-    # max length for each pair of strings
-    for i in range(len(s1)):
-        if len(s1[i]) == len(s2[i]):
-            max_char = len(s1[i])
-        else:
-            max_char = max(len(s1[i]), len(s2[i]))
-
-        lev = levenshtein(s1[i], s2[i])
-
-        char_count += max_char
-        lev_count += lev
-
-        ped_details[i] = (lev / max_char, source_list[i], s1[i], s2[i])
-
-    ped = lev_count / char_count
+    ped_details = df[['score', 'source', 'target', 'mt']].to_dict('index')
+    ped = df['lev'].sum() / df['max_char'].sum()
     cache['ped'] = ped
     cache['ped_details'] = ped_details
 
