@@ -1,5 +1,5 @@
 import re
-from collections import defaultdict
+from collections import defaultdict, OrderedDict
 import itertools
 import logging
 import os.path
@@ -270,7 +270,7 @@ def collect_string_data(soup, filetype, mt_soup=None):
     """
     seg_id = defaultdict(list)
     status = defaultdict(list)
-
+    breakpoint()
     if filetype == 'HTML':
         seg_id['source'], text = parse_html_strings(soup)
         # function call to extract status data from third column
@@ -306,6 +306,10 @@ def collect_string_data(soup, filetype, mt_soup=None):
     # Create target keys and populate with source values.
     status['target'] = status['source']
     seg_id['target'] = seg_id['source']
+    #  TODO: Add keys in the same order or create DataFrame from keys and not from iterable
+    seg_id = OrderedDict(sorted(seg_id.items(), key=lambda t: t[0]))
+    text = OrderedDict(sorted(text.items(), key=lambda t: t[0]))
+    status = OrderedDict(sorted(status.items(), key=lambda t: t[0]))
 
     return create_dataframe(seg_id, text, status)
 
@@ -323,6 +327,7 @@ def create_dataframe(seg_id, text, status):
         df -- Cleaned DataFrame object containing Segment IDs as index, and strings, status infos and segment type info
               as columns.
     """
+
     # Convert dictionary values to Series'
     seg_id_se = pd.Series(itertools.chain.from_iterable(seg_id.values()), name='seg_id')
     text_se = pd.Series(itertools.chain.from_iterable(text.values()), name='text')
