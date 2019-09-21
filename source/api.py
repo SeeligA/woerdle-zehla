@@ -16,22 +16,36 @@ def call_api(parameters, method='post'):
         parameters -- dictionary containing api parameters as key-value pairs
         method -- string specifying the method called in the request function.
                   Accepts the following values: "post" (default), 'get'
-                  Get method IS considered less secure, because data is sent as part of the URL!
-    #  TODO: Managing requests by splitting up requests considered too long
+                  Get method IS considered less secure, because data is sent as part of the header!
 
     Returns:
         target -- list of strings from translation output
     """
-    translation = None
+
     # POST request, preferred method
     if method == 'post':
-        translation = post_translation(parameters)
-    # GET request, deprecated method
-    elif method == 'get':
-        translation = get_translation(parameters)
+        response = post_translation(parameters)
+    # GET request, deprecated
+    else:
+        response = get_translation(parameters)
 
+    translation = handle_response(response)
     # Parse output from json response: target values are stored under the 'text' key
     return [translation['translations'][i]['text'] for i in range(len(translation['translations']))]
+
+
+def handle_response(response):
+    status_code = response.status_code
+    if status_code == 200:
+        return json.loads(response.content.decode('utf-8'))
+
+    elif status_code == 414:
+        print('Uri too long')
+        raise Error414
+
+    else:
+        print(status_code)
+        raise Exception
 
 
 def collect_trans_parameters(source,
@@ -96,19 +110,7 @@ def get_translation(parameters):
     url = 'https://api.deepl.com/v2/translate'
     params = parameters
 
-    response = requests.get(url, params=params)
-    status_code = response.status_code
-
-    if status_code == 200:
-        return json.loads(response.content.decode('utf-8'))
-
-    elif status_code == 414:
-        print('Uri too long')
-        raise Error414
-
-    else:
-        print(status_code)
-        raise Exception
+    return requests.get(url, params=params)
 
 
 def post_translation(parameters):
@@ -125,16 +127,6 @@ def post_translation(parameters):
     url = 'https://api.deepl.com/v2/translate'
     headers = {'Content-Type': 'application/x-www-form-urlencoded'}
 
-    response = requests.post(url, params=parameters, headers=headers)
-    status_code = response.status_code
-    if status_code == 200:
-        return json.loads(response.content.decode('utf-8'))
+    return requests.post(url, params=parameters, headers=headers)
 
-    elif status_code == 414:
-        print('Uri too long')
-        raise Error414
-
-    else:
-        print(status_code)
-        raise Exception
 

@@ -15,7 +15,7 @@ from matplotlib.backends.backend_qt5agg import (FigureCanvas, NavigationToolbar2
 from matplotlib.figure import Figure
 
 from source.parsing import read_from_file
-from source.utils import new_translation, match_target_mt, save_cache, range_positive
+from source.utils import new_translation, match_target_mt, save_cache
 from source.sampling import new_sample
 from source.calculation import pe_density
 from source.settings import SettingsWindow
@@ -70,10 +70,13 @@ class MyWindow(QMainWindow):
             - the Output line edit
             - Optional: A json file saved manually or via the autosave function set in settings.
         """
-        
+
         if w.ignore_history_false.isChecked():
 
-            w.df, w.cache = read_from_file(w.input_file_line_edit.text(), versions=True)
+            fp = w.input_file_line_edit.text()
+
+            w.df, w.cache = read_from_file(fp, raw_mt=True)
+            #  TODO: Check if the filter index is still necessary when matching string indices in match_target_mt below.
             filter_index = w.df.query('status == "mt"').index
             w.df = w.df.loc[filter_index]
 
@@ -84,9 +87,9 @@ class MyWindow(QMainWindow):
         else:
             w.df = new_translation(w.df, w.cache, w.sample_object)
 
-        source_list, target_list, mt_list = match_target_mt(w.df)
+        df_mt = match_target_mt(w.df)
 
-        w.cache = pe_density(source_list, target_list, mt_list, w.cache)
+        w.cache = pe_density(df_mt, w.cache)
         w.actionSave_as.setEnabled(True)
         w.textOutput.setText(str('Your Post-Edit Density score is {:.3f}\n'.format(w.cache['ped'])))
         w.statistics()
@@ -101,11 +104,11 @@ class MyWindow(QMainWindow):
         """Helper function for printing PED details"""
         wrapper = textwrap.TextWrapper(subsequent_indent=' '*20)
         count = 0
-        for value in apples_or_peaches.values():
+        for k, v in apples_or_peaches.items():
 
-            w.textOutput.append('PED = {:.3f}'.format(value[0]))
-            w.textOutput.append('MT Output  : ' + str(wrapper.fill(text=value[3])))
-            w.textOutput.append('Target Übs : ' + str(wrapper.fill(text=value[2])) + '\n')
+            w.textOutput.append('PED = {:.3f}'.format(v['score']))
+            w.textOutput.append('MT Output  : ' + str(wrapper.fill(text=v['mt'])))
+            w.textOutput.append('Target Übs : ' + str(wrapper.fill(text=v['target'])) + '\n')
 
             count += 1
             if count == 10:
@@ -142,8 +145,8 @@ class MyWindow(QMainWindow):
             None
         """
         # TODO: Add BA and PP limits to app settings
-        bad_apples = {k: v for k, v in w.cache['ped_details'].items() if v[0] >= ba_limit}
-        peach_perfect = {k: v for k, v in w.cache['ped_details'].items() if v[0] <= pp_limit}
+        bad_apples = {k: v for k, v in w.cache['ped_details'].items() if v['score'] >= ba_limit}
+        peach_perfect = {k: v for k, v in w.cache['ped_details'].items() if v['score'] <= pp_limit}
 
         if len(bad_apples) > 0:
             w.textOutput.append(str('---Zu den Bad Apples (PED >= {}) gehören folgende Strings---\n'.format(ba_limit)))
@@ -177,7 +180,13 @@ class ApplicationWindow(QtWidgets.QMainWindow):
         self.addToolBar(NavigationToolbar(static_canvas, self))
 
         self._static_ax = static_canvas.figure.subplots()
-        df = pd.DataFrame.from_dict(data={k: v[0] for k, v in w.cache['ped_details'].items()},
+
+        try:
+            assert hasattr(w, "cache")
+        except AssertionError:
+            return
+
+        df = pd.DataFrame.from_dict(data={k: v['score'] for k, v in w.cache['ped_details'].items()},
                                     orient='index', columns=['ped'])
 
         bin_edges = np.arange(0, df['ped'].max()+0.05, 0.05)

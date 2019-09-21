@@ -28,5 +28,8 @@ python gui.py
 ```
 This will start the GUI. Check out the settings options to manage additional aspects of the tool.
 
+## Running the notebook
+If you want to run the woerdle-zehla tool on a remote machine, use the accompanying [Jupyter Notebook](woerdle-zehla.ipynb "Woerdle-zehla Jupyter Notebook").
+
 ## Questions
 Feel free to drop me a line in case of any questions.

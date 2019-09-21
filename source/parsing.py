@@ -270,7 +270,7 @@ def collect_string_data(soup, filetype, mt_soup=None):
     """
     seg_id = defaultdict(list)
     status = defaultdict(list)
-    breakpoint()
+
     if filetype == 'HTML':
         seg_id['source'], text = parse_html_strings(soup)
         # function call to extract status data from third column
@@ -394,14 +394,14 @@ def read_filetype(file):
         return None
 
 
-def read_from_file(fp, encoding='utf-8', versions=False):
+def read_from_file(fp, encoding='utf-8', raw_mt=False):
     """Read file with translation unit data.
 
     Arguments:
         fp -- path to file to be parsed. At the moment the parser accepts both sdlxliff and
               html files (with/without change history)
         encoding -- defaults to utf-8
-        versions -- Flag to control the source of the MT output.
+        raw_mt -- Flag to control the source of the MT output. Either a Boolean or a valid file path
                     If True, MT strings will be parsed from the version history (HTML) or a separate file (XML).
     TODO: Check for other encodings,
           idea: Lookup charset from HTML Header / XML declaration and return in cache
@@ -431,12 +431,15 @@ def read_from_file(fp, encoding='utf-8', versions=False):
         return None
 
     # function call to extract string data from source and target columns
-    if versions:
+    if raw_mt:
         # Prompt for path to SDLXLIFF containing MT output
         if filetype == 'XML':
-            fp = QFileDialog.getOpenFileName(caption="Select file with MT segments",
-                                             filter='SDLXLIFF-Datei ({})'.format(os.path.basename(fp)))[0]
-
+            # Updata file path with file path to raw MT file
+            if raw_mt == bool():
+                fp = QFileDialog.getOpenFileName(caption="Select file with MT segments",
+                                                 filter='SDLXLIFF-Datei ({})'.format(os.path.basename(fp)))[0]
+            else:
+                fp = raw_mt
         # Make new soup
         with open(fp, 'r', encoding=encoding) as f:
             mt_soup = BeautifulSoup(f, 'lxml')
