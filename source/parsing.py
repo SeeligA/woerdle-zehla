@@ -409,8 +409,8 @@ def read_from_file(fp, encoding='utf-8', raw_mt=False):
         df -- DataFrame object with parsed text, segment type and status information which uses seg_id as index
         cache -- Dictionary with metadata pertaining to the project
     """
-
-    with open(fp, 'r', encoding=encoding) as f:
+    print(f'Here {fp}')
+    with open(fp, 'r', encoding="utf-8") as f:
         filetype = read_filetype(f)
         soup = BeautifulSoup(f, 'lxml')
     # Collect metadata from HTML table's head column
@@ -435,12 +435,13 @@ def read_from_file(fp, encoding='utf-8', raw_mt=False):
         # Prompt for path to SDLXLIFF containing MT output
         if filetype == 'XML':
             # Updata file path with file path to raw MT file
-            if raw_mt == bool():
+            if bool(raw_mt):
                 fp = QFileDialog.getOpenFileName(caption="Select file with MT segments",
                                                  filter='SDLXLIFF-Datei ({})'.format(os.path.basename(fp)))[0]
             else:
                 fp = raw_mt
         # Make new soup
+
         with open(fp, 'r', encoding=encoding) as f:
             mt_soup = BeautifulSoup(f, 'lxml')
         df = collect_string_data(soup, filetype, mt_soup=mt_soup)

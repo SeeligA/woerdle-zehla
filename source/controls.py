@@ -24,7 +24,6 @@ class MyControlWidget(widgets.Tab):
         # Load settings
         self.settings = QtCore.QSettings("Lev Corp.", "woerdle-zehla")
 
-
         self.input_widget = widgets.GridBox()
         self.source_file_input = None
         self.sample_size_box = None
@@ -32,7 +31,6 @@ class MyControlWidget(widgets.Tab):
         # self.out = widgets.Output()
 
     def init_ui(self):
-
 
         self.source_file_input = self.file_selector(placeholder="Enter path to file", desc="Deliverable")
         self.raw_mt_input = self.file_selector(placeholder="Enter path to raw MT file", desc="Raw MT file", disabled=True)
@@ -78,6 +76,7 @@ class MyControlWidget(widgets.Tab):
 
     @staticmethod
     def build_text_area():
+        """Build text area for string output."""
         return widgets.Textarea(
             layout={'width': '98.5%', 'height': '99.5%', 'border': '2px solid grey'})
 
@@ -106,6 +105,7 @@ class MyControlWidget(widgets.Tab):
                                layout=widgets.Layout(grid_template_columns="repeat(1, 99.5%)"))
 
     def build_input_widget(self):
+        """Build input files grid."""
 
         return widgets.GridBox([self.source_file_input, self.raw_mt_input],
                                layout=widgets.Layout(grid_template_columns="repeat(1, 99.5%)"))
